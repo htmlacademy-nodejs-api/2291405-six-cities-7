@@ -27,8 +27,7 @@ export class CLIApplication {
         throw new Error(`"${commandName}" is not an internal command`);
       }
       return this.commands[commandName];
-    }
-    catch (error) {
+    } catch (error) {
       if (error instanceof Error) {
         console.error(chalk.red(error.message));
       }
