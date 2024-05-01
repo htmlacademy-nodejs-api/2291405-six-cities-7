@@ -72,10 +72,7 @@ export class TSVFileReader implements FileReader {
   private parseCity(name: string): City {
     const location = getCityLocation(name);
     return {
-      location: {
-        latitude: location.latitude,
-        longitude: location.longitude
-      },
+      location: location,
       name: name
     };
   }
