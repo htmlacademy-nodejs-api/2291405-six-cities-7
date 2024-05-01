@@ -1,5 +1,5 @@
 import { Command } from './command.interface.js';
-import { Commands } from '../../const.js';
+import { Commands } from '../../shared/helpers/const.js';
 import chalk from 'chalk';
 
 
