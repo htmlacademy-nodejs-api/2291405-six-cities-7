@@ -11,7 +11,7 @@ export function getCity(name: string): City {
 }
 
 export function stringToBoolean(value: string): boolean {
-  return JSON.parse(value.toLocaleLowerCase()) as boolean;
+  return value.toLocaleLowerCase() === 'true';
 }
 
 export function generateRandomValue(min:number, max: number, numAfterDigit = 0) {

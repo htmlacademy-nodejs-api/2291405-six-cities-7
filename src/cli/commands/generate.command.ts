@@ -38,7 +38,7 @@ export class GenerateCommand implements Command {
       }
 
       const [count, filepath, url] = parameters;
-      const offerCount = Number.parseInt(count, 10);
+      const offerCount = Number(count);
 
       await this.load(url);
       await this.write(filepath, offerCount);

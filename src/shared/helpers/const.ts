@@ -1,10 +1,10 @@
 import { City } from '../types/index.js';
 
 export enum Commands {
-  help = 'help',
-  version = 'version',
-  import = 'import',
-  generate = 'generate'
+  help = '--help',
+  version = '--version',
+  import = '--import',
+  generate = '--generate'
 }
 
 export const CITIES: City[] = [

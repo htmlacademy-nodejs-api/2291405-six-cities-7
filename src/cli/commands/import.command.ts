@@ -15,7 +15,7 @@ export class ImportCommand implements Command {
   }
 
   public getName(): string {
-    return `--${Commands.import}`;
+    return Commands.import;
   }
 
   public async execute(...parameters: string[]): Promise<void> {

@@ -34,7 +34,7 @@ export class VersionCommand implements Command {
   }
 
   public getName(): string {
-    return `--${Commands.version}`;
+    return Commands.version;
   }
 
   public async execute(..._parameters: string[]): Promise<void> {
