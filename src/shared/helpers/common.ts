@@ -1,15 +1,3 @@
-import { CITIES } from './const.js';
-import { City } from '../types/index.js';
-
-export function getCity(name: string): City {
-  const city = CITIES.find((c) => c.name === name);
-  if (city !== undefined) {
-    return city;
-  } else {
-    return CITIES[0];
-  }
-}
-
 export function stringToBoolean(value: string): boolean {
   return value.toLocaleLowerCase() === 'true';
 }
