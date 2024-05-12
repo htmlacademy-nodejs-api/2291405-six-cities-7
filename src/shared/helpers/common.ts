@@ -2,7 +2,7 @@ import { City } from '../types/index.js';
 import { CITIES } from './const.js';
 
 
-export function stringToBoolean(value: string): boolean {
+export function convertStringToBoolean(value: string): boolean {
   return value.toLocaleLowerCase() === 'true';
 }
 
@@ -26,9 +26,9 @@ export function ParseObject(obj: object): string {
 }
 
 export function getRandomCity(): City {
-  const name = getRandomItem<string>(Object.keys(CITIES));
+  const name = getRandomItem(Object.keys(CITIES));
   return {
-    name: name,
+    name,
     location: CITIES[name]
   };
 }

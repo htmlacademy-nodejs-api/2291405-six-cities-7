@@ -3,7 +3,7 @@ import { createReadStream } from 'node:fs';
 
 import { FileReader } from './file-reader.interface.js';
 import { Offer, Host, Location, City} from '../../types/index.js';
-import { stringToBoolean} from '../../helpers/common.js';
+import { convertStringToBoolean} from '../../helpers/index.js';
 import { CITIES } from '../../helpers/const.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
@@ -47,8 +47,8 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       city: this.parseCity(city),
       previewImage,
       images: images.split(';'),
-      isPremium: stringToBoolean(isPremium),
-      isFavorite: stringToBoolean(isFavorite),
+      isPremium: convertStringToBoolean(isPremium),
+      isFavorite: convertStringToBoolean(isFavorite),
       rating: Number(rating),
       type,
       bedrooms: Number(bedrooms),
@@ -77,7 +77,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       email,
       avatarUrl,
       password,
-      isPro: stringToBoolean(isPro)
+      isPro: convertStringToBoolean(isPro)
     };
   }
 

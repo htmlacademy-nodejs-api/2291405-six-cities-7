@@ -5,10 +5,9 @@ import { Logger } from './logger.interface.js';
 
 @injectable()
 export class PinoLogger implements Logger {
-  private readonly logger: PinoInstance;
+  private readonly logger: PinoInstance = pino();
 
   constructor() {
-    this.logger = pino();
     this.info('Logger created.');
   }
 
