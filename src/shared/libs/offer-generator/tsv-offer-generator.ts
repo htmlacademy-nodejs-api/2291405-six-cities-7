@@ -1,10 +1,11 @@
 import dayjs from 'dayjs';
 
-import { City, Location, Host } from '../../types/index.js';
+import { Location, Host } from '../../types/index.js';
 
 import { OfferGenerator } from './offer-generator.interface.js';
 import { MockServerData } from '../../types/index.js';
-import { generateRandomValue, getRandomItem, getRandomItems, PLACETYPES, CITIES, GOODS, ParseObject } from '../../helpers/index.js';
+import { generateRandomValue, getRandomItem, getRandomItems, PLACETYPES, GOODS, ParseObject } from '../../helpers/index.js';
+import { getRandomCity } from '../../helpers/common.js';
 
 const MIN_ROOMS = 1;
 const MAX_ROOMS = 8;
@@ -32,7 +33,7 @@ export class TSVOfferGenerator implements OfferGenerator {
       subtract(generateRandomValue(FIRST_WEEK_DAY, LAST_WEEK_DAY), 'day').
       toISOString();
 
-    const city = getRandomItem<City>(CITIES).name;
+    const city = getRandomCity();
     const previewImage = getRandomItem<string>(this.mockData.previewImages);
     const images = getRandomItems<string>(this.mockData.images).join(';');
 

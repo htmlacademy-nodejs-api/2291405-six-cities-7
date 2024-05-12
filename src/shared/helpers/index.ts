@@ -1,6 +1,6 @@
 export {
-  getCity,
-  stringToBoolean,
+  getRandomCity,
+  convertStringToBoolean,
   generateRandomValue,
   getRandomItems,
   getRandomItem,

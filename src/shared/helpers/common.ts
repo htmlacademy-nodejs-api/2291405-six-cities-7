@@ -1,4 +1,8 @@
-export function stringToBoolean(value: string): boolean {
+import { City } from '../types/index.js';
+import { CITIES } from './const.js';
+
+
+export function convertStringToBoolean(value: string): boolean {
   return value.toLocaleLowerCase() === 'true';
 }
 
@@ -19,4 +23,12 @@ export function getRandomItem<T>(items: T[]):T {
 export function ParseObject(obj: object): string {
   const values = Object.values(obj);
   return values.join('\t');
+}
+
+export function getRandomCity(): City {
+  const name = getRandomItem(Object.keys(CITIES));
+  return {
+    name,
+    location: CITIES[name]
+  };
 }
