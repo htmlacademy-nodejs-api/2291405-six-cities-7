@@ -1,6 +1,7 @@
 import { Host } from './host.type.js';
 import { City } from './city.type.js';
 import { Location } from './location.type.js';
+import { OfferType } from '../helpers/index.js';
 
 export type Offer = {
   title: string;
@@ -12,7 +13,7 @@ export type Offer = {
   isPremium: boolean;
   isFavorite: boolean;
   rating: number;
-  type: string;
+  type: OfferType;
   bedrooms: number;
   maxAdults: number;
   price: number;

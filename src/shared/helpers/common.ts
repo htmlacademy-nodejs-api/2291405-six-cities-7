@@ -32,3 +32,18 @@ export function getRandomCity(): City {
     location: CITIES[name]
   };
 }
+
+
+export function getMongoURI(
+  username: string,
+  password: string,
+  host: string,
+  port: number,
+  databaseName: string,
+): string {
+  return `mongodb://${username}:${password}@${host}:${port}/${databaseName}?authSource=admin`;
+}
+
+export function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : '';
+}

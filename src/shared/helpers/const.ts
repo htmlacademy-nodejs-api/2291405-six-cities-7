@@ -26,9 +26,9 @@ export const GOODS = [
   'Fridge'
 ];
 
-export const PLACETYPES = [
-  'apartment',
-  'house',
-  'room',
-  'hotel'
-];
+export enum OfferType {
+  apartment = 'apartment',
+  house = 'house',
+  room = 'room',
+  hotel = 'hotel'
+}

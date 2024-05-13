@@ -3,7 +3,7 @@ import { createReadStream } from 'node:fs';
 
 import { FileReader } from './file-reader.interface.js';
 import { Offer, Host, Location, City} from '../../types/index.js';
-import { convertStringToBoolean} from '../../helpers/index.js';
+import { OfferType, convertStringToBoolean} from '../../helpers/index.js';
 import { CITIES } from '../../helpers/const.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
@@ -34,7 +34,6 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       name,
       email,
       avatarUrl,
-      password,
       isPro,
       latitude,
       longitude
@@ -50,12 +49,12 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       isPremium: convertStringToBoolean(isPremium),
       isFavorite: convertStringToBoolean(isFavorite),
       rating: Number(rating),
-      type,
+      type: OfferType[type as 'apartment' | 'house' | 'room' | 'hotel'],
       bedrooms: Number(bedrooms),
       maxAdults: Number(maxAdults),
       price: Number(price),
       goods: goods.split(';'),
-      host: this.parseHost(name, email, avatarUrl, password, isPro),
+      host: this.parseHost(name, email, avatarUrl, isPro),
       location: this.parseLocation(latitude, longitude)
     };
   }
@@ -71,12 +70,11 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     return { latitude: Number(latitude), longitude: Number(longitude) };
   }
 
-  private parseHost(name: string, email: string, avatarUrl:string, password: string, isPro: string): Host {
+  private parseHost(name: string, email: string, avatarUrl:string, isPro: string): Host {
     return {
       name,
       email,
       avatarUrl,
-      password,
       isPro: convertStringToBoolean(isPro)
     };
   }
@@ -100,7 +98,9 @@ export class TSVFileReader extends EventEmitter implements FileReader {
         importedRowCount++;
 
         const parsedOffer = this.parseLineToOffer(completeRow);
-        this.emit('line', parsedOffer);
+        await new Promise((resolve) => {
+          this.emit('line', parsedOffer, resolve);
+        });
       }
     }
 
