@@ -23,6 +23,6 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async findById(id: string): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel.findById(id).exec();
+    return this.offerModel.findById(id);
   }
 }

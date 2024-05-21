@@ -47,13 +47,10 @@ export class ImportCommand implements Command {
       password: DEFAULT_USER_PASSWORD
     }, this.salt);
 
-    const offerLocation = await this.locationService.findOrCreate({
-      ...offer.location
-    });
-
-    const cityLocation = await this.locationService.findOrCreate({
-      ...offer.city.location
-    });
+    const [offerLocation, cityLocation] = await Promise.all([
+      this.locationService.findOrCreate({...offer.location}),
+      this.locationService.findOrCreate({...offer.city.location})
+    ]);
 
     const city = await this.cityService.findOrCreate({
       name: offer.city.name,

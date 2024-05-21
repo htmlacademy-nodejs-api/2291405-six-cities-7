@@ -1,4 +1,4 @@
-import { Ref, defaultClasses, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import { Ref, Severity, defaultClasses, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
 import { Location, City, Host } from '../../types/index.js';
 import { LocationEntity } from '../location/index.js';
@@ -13,6 +13,9 @@ export interface OfferEntity extends defaultClasses.Base {}
   schemaOptions: {
     collection: 'offers',
     timestamps: true,
+  },
+  options: {
+    allowMixed: Severity.ALLOW
   }
 })
 
@@ -37,7 +40,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   public previewImage!: string;
 
   @prop()
-  public images!: string[];
+  public images: string[];
 
   @prop({default: false})
   public isPremium: boolean;
@@ -52,19 +55,19 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     type: () => String,
     enum: OfferType
   })
-  public type!: OfferType;
+  public type: OfferType;
 
   @prop({default: 0})
-  public bedrooms!: number;
+  public bedrooms: number;
 
   @prop()
-  public maxAdults!: number;
+  public maxAdults: number;
 
   @prop({required: true, default: 0})
   public price!: number;
 
   @prop({default: []})
-  public goods!: string[];
+  public goods: string[];
 
   @prop({
     ref: HostEntity,

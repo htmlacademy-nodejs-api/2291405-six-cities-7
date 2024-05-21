@@ -49,7 +49,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       isPremium: convertStringToBoolean(isPremium),
       isFavorite: convertStringToBoolean(isFavorite),
       rating: Number(rating),
-      type: OfferType[type as 'apartment' | 'house' | 'room' | 'hotel'],
+      type: type as OfferType,
       bedrooms: Number(bedrooms),
       maxAdults: Number(maxAdults),
       price: Number(price),

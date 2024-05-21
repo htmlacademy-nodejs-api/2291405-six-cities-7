@@ -23,7 +23,7 @@ export class DefaultCityService implements CityService {
   }
 
   public async findById(id: string): Promise<DocumentType<CityEntity> | null> {
-    return this.cityModel.findById(id).exec();
+    return this.cityModel.findById(id);
   }
 
   public async findByName(name: string): Promise<DocumentType<CityEntity> | null> {

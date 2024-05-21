@@ -1,7 +1,6 @@
 import { OfferType } from '../../../helpers/index.js';
 
 export class CreateOfferDto {
-  public offerId?: string;
   public title: string;
   public description: string;
   public dateOfPublication: Date;
