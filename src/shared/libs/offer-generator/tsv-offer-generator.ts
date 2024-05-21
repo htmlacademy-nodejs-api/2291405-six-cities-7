@@ -4,7 +4,7 @@ import { Location, Host } from '../../types/index.js';
 
 import { OfferGenerator } from './offer-generator.interface.js';
 import { MockServerData } from '../../types/index.js';
-import { generateRandomValue, getRandomItem, getRandomItems, PLACETYPES, GOODS, ParseObject } from '../../helpers/index.js';
+import { generateRandomValue, getRandomItem, getRandomItems, OfferType, GOODS, ParseObject } from '../../helpers/index.js';
 import { getRandomCity } from '../../helpers/common.js';
 
 const MIN_ROOMS = 1;
@@ -41,7 +41,7 @@ export class TSVOfferGenerator implements OfferGenerator {
     const isFavorite = getRandomItem([true, false]);
 
     const rating = generateRandomValue(MIN_RATING, MAX_RATING).toString();
-    const type = getRandomItem<string>(PLACETYPES);
+    const type = getRandomItem(Object.values(OfferType));
     const bedrooms = generateRandomValue(MIN_ROOMS, MAX_ROOMS).toString();
     const maxAdults = generateRandomValue(MIN_GUESTS, MAX_GUESTS).toString();
     const price = generateRandomValue(MIN_PRICE, MAX_PRICE).toString();

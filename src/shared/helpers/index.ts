@@ -4,12 +4,18 @@ export {
   generateRandomValue,
   getRandomItems,
   getRandomItem,
-  ParseObject
+  ParseObject,
+  getMongoURI,
+  getErrorMessage
 } from './common.js';
+
+export {
+  createSHA256
+} from './hash.js';
 
 export {
   Commands,
   CITIES,
   GOODS,
-  PLACETYPES
+  OfferType
 } from './const.js';
