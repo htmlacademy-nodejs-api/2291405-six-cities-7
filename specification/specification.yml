@@ -1,0 +1,812 @@
+openapi: '3.0.2'
+info:
+  title: API сервер для проекта «Шесть городов».
+  description: |-
+    * Список ресурсов и маршрутов сервера «Шесть городов».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+tags:
+  - name: users
+    description: Действия с пользователями.
+  - name: offers
+    description: Действия с предложениями по аренде.
+  - name: cities
+    description: Действия с городами.
+  - name: comments
+    description: Действия с комментариями.
+paths:
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Создание (регистрация) нового пользователя
+      description: Регистрирует нового пользователя.
+
+      requestBody:
+        description: Информация для создания нового пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+        required: true
+
+      responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authInfo'
+
+        "409":
+          description: Пользователь с таким email уже существует.
+
+  /users/login:
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+
+      parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      responses:
+        "200":
+          description: Пользователь авторизован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authInfo'
+
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя (вход в закрытую часть приложения)
+      description: Авторизует пользователя на основе логина и пароля
+
+      requestBody:
+        description: Информация для создания нового пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/authUser'
+        required: true
+
+      responses:
+        "200":
+          description: Вход выполнен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userToken'
+
+        "400":
+          description: Пользователь с таким именем не существует. Неверный логин или пароль.
+
+  /users/logout:
+    delete:
+      tags:
+        - users
+      summary: Завершение пользовательского сеанса
+      description: Выход из закрытой части приложения
+
+      parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      responses:
+        "204":
+          description: Выход выполнен.
+      security:
+        - tokenAuth: []
+
+  /offers:
+    get:
+      tags:
+        - offers
+      summary: Получить список всех предложений
+      description: Возвращает список всех предложений для аренды
+
+      responses:
+        "200":
+          description: Возвращает список предложений.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offers'
+
+    post:
+      tags:
+        - offers
+      summary: Создание нового предложения
+      description: Регистрирует новое предложение.
+
+      parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      requestBody:
+        description: Информация для создания нового предложения.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/offer'
+        required: true
+
+      responses:
+        "201":
+          description: Предложение успешно создано.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+
+        "401":
+          description: Ошибка валидации данных.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validationErrorMessage'
+        "403":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+
+  /offers/{offerId}:
+    get:
+      tags:
+        - offers
+      summary: Получить предложение
+      description: Возвращает объект предложения по идентификатору
+
+      parameters:
+        - name: offerId
+          in: path
+          description: Уникальный идентификатор предложения
+          required: true
+          schema:
+            type: number
+            example: 1
+
+      responses:
+        "200":
+          description: Возвращает объект предложения.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+        "404":
+          description: Если предложение не найдено.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFoundErrorMessage'
+
+    patch:
+      tags:
+        - offers
+      summary: Редакитрование предложения
+      description: Ресурс для редактирования существующего предложения
+
+      parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      requestBody:
+        description: Обновленная информация о предложении.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/offer'
+        required: true
+
+      responses:
+        "200":
+          description: Объявление успешно отредактировано.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+
+        "403":
+          description: Валидация не пройдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validationErrorMessage'
+        "401":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+
+    delete:
+      tags:
+        - offers
+      summary: Удаляет предложение
+      description: Удаление предложения по идентификатору
+
+      parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      responses:
+        "204":
+          description: Предложение успешно удалено.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Предложение с идентификатором 5 успешно удалено
+
+  /offers/{cityId}/premium:
+    get:
+      tags:
+        - offers
+      summary: Получить список всех премиальных предложений для города
+      description: Получить список всех премиальных предложений для города
+      parameters:
+        - name: cityId
+          in: path
+          description: Уникальный идентификатор города
+          required: true
+          schema:
+            type: number
+            example: 1
+
+      responses:
+        "200":
+          description: Возвращает список предложений.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offers'
+        "404":
+          description: Если город не найден.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFoundErrorMessage'
+
+  /offers/favorites:
+    get:
+      tags:
+        - offers
+      summary: Получить список избранных предложений
+      description: Получить список избранных предложений пользователя
+
+      parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      responses:
+        "200":
+          description: Возвращает список предложений.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offers'
+        "403":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+
+  /offers/favorites/{offerId}/{action}:
+    post:
+      tags:
+        - offers
+      summary: Добавляет или удаляет предложение из избранного
+      description: Добавляет или удаляет предложение из избранного
+
+      parameters:
+        - name: offerId
+          in: path
+          description: Уникальный идентификатор города
+          required: true
+          schema:
+            type: number
+            example: 1
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      responses:
+        "200":
+          description: Возвращает список предложений.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Предложение с идентификатором 5 успешно добавлено в избранное
+        "403":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+
+  /comments/{offerId}:
+    get:
+      tags:
+        - comments
+      summary: Получить список комментариев
+      description: Возвращает список комментариев для предложения с идентификатором `offerId`.
+      operationId: getComment
+      parameters:
+        - name: offerId
+          in: path
+          description: Уникальный идентификатор предложения
+          required: true
+          schema:
+            type: number
+            example: 1
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: false
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+      responses:
+        '200':
+          description: Массив комментариев
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/commentGet'
+        '400':
+          description: Ошибка тела запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFoundErrorMessage'
+    post:
+      tags:
+        - comments
+      summary: Добавить новый комментарий
+      description: Добавляет новый комментарий для предложения с идентификатором `offerId`.
+      operationId: postComment
+      parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+        - name: hotelId
+          in: path
+          description: Уникальный идентификатор предложения
+          required: true
+          schema:
+            type: number
+            example: 1
+      requestBody:
+        description: Объект с новым комментарием
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/commentPost'
+        required: true
+      responses:
+        '200':
+          description: Массив комментариев для предложения с идентификатором `offerId`
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/commentGet'
+        '400':
+          description: Ошибка тела запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFoundErrorMessage'
+        '401':
+          description: Пользователь не авторизован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+      security:
+        - tokenAuth: []
+
+  /cities:
+    get:
+      tags:
+        - cities
+      summary: Получить список всех городов
+      description: Возвращает список всех городов
+
+      responses:
+        "200":
+          description: Возвращает список городов.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cities'
+
+  /cities/{cityId}:
+    get:
+      tags:
+        - cities
+      summary: Получить город
+      description: Возвращает объект города по идентификатору
+
+      parameters:
+        - name: cityId
+          in: path
+          description: Уникальный идентификатор города
+          required: true
+          schema:
+            type: number
+            example: 1
+
+      responses:
+        "200":
+          description: Возвращает объект города.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/city'
+        "404":
+          description: Если город не найден.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFoundErrorMessage'
+
+components:
+  schemas:
+
+    user:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        password:
+          type: string
+          example: 123456
+
+    authInfo:
+      type: object
+
+      properties:
+        id:
+          type: string
+          example: 1
+
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        name:
+          type: string
+          example: Oliver.conner
+
+        avatarUrl:
+          type: string
+          example: "img/1.png"
+
+        isPro:
+          type: boolean
+          example: true
+
+        token:
+          type: string
+          example: 8ZidsUU03JzQxiZWILHAY4exsij
+
+    authUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        password:
+          type: string
+          example: 123456
+
+    userToken:
+      type: object
+
+      properties:
+        token:
+          type: string
+          example: 8ZidsUU03JzQxiZWILHAY4exsij
+
+    offer:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: 'House in countryside'
+
+        description:
+          type: string
+          example: 'A new spacious villa, one floor. All commodities, jacuzzi and'
+
+        dateOfPublication:
+          type: string
+          example: '2024-03-15T12:48:40.284Z'
+
+        city:
+          type: object
+          example: {
+            location: {
+              latitude: 52.370216,
+              longitude: 4.895168
+            },
+            name: 'Amsterdam'
+          }
+
+        previewImage:
+          type: string
+          example: 'https://15.design.htmlacademy.pro/static/hotel/9.jpg'
+
+        images:
+          type: array
+          example: [
+            https://15.design.htmlacademy.pro/static/hotel/2.jpg,
+            https://15.design.htmlacademy.pro/static/hotel/15.jpg
+          ]
+
+        isPremium:
+          type: boolean
+          example: true
+
+        isFavorite:
+          type: boolean
+          example: true
+
+        rating:
+          type: number
+          example: 3
+
+        type:
+          type: string
+          example: 'house'
+
+        bedrooms:
+          type: number
+          example: 3
+
+        maxAdults:
+          type: number
+          example: 3
+
+        price:
+          type: number
+          example: 3
+
+        goods:
+          type: array
+          example: [
+            Fridge,
+            Breakfast,
+            Washerg
+          ]
+
+        host:
+          type: string
+          example: 'ZidsUU03JzQxiZWILHAY4exsij'
+
+        location:
+          type: object
+          example: {
+            latitude: 52.370216,
+            longitude: 4.895168
+          }
+
+        commentsCount:
+          type: number
+          example: 0
+
+    offerItem:
+      type: object
+
+      properties:
+        price:
+          type: number
+          example: 3
+
+        title:
+          type: string
+          example: 'House in countryside'
+
+        type:
+          type: string
+          example: 'house'
+
+        isFavorite:
+          type: boolean
+          example: true
+
+        dateOfPublication:
+          type: string
+          example: '2024-03-15T12:48:40.284Z'
+
+        city:
+          type: object
+          example: {
+            location: {
+              latitude: 52.370216,
+              longitude: 4.895168
+            },
+            name: 'Amsterdam'
+          }
+
+        previewImage:
+          type: string
+          example: 'https://15.design.htmlacademy.pro/static/hotel/9.jpg'
+
+        isPremium:
+          type: boolean
+          example: true
+
+        rating:
+          type: number
+          example: 3
+
+        commentsCount:
+          type: number
+          example: 10
+
+    offers:
+      type: array
+      items:
+        type: object
+        $ref: '#/components/schemas/offerItem'
+
+    commentGet:
+      type: object
+      properties:
+        comment:
+          type: string
+          example: A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam.
+        date:
+          type: string
+          example: 2019-05-08T14:13:56.569Z
+        id:
+          type: number
+          example: 1
+        rating:
+          type: number
+          example: 4
+        user:
+          type: object
+          properties:
+            avatarUrl:
+              type: string
+              example: img/1.png
+            id:
+              type: number
+              example: 1
+            isPro:
+              type: boolean
+              example: false
+            name:
+              type: string
+              example: Oliver.conner
+
+    commentPost:
+      type: object
+      properties:
+        comment:
+          type: string
+          example: A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam.
+        rating:
+          type: number
+          example: 4
+
+    city:
+      type: object
+
+      properties:
+        name:
+          type: string
+          example: 'Paris'
+
+        location:
+          type: object
+          example: {
+            latitude: 58.0025,
+            longitude: 4.057496
+          }
+
+    cities:
+      type: array
+      items:
+        type: object
+        $ref: '#/components/schemas/city'
+
+    authErrorMessage:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Вы не авторизованы, либо не имеет прав на доступ к данной странице.
+
+    validationErrorMessage:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Данные не прошли валидацию.
+
+    notFoundErrorMessage:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Предложение не найдено.
+
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      name: X-Token
+      in: header
