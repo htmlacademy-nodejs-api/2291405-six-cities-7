@@ -10,9 +10,6 @@ import { getRandomCity } from '../../helpers/common.js';
 const MIN_ROOMS = 1;
 const MAX_ROOMS = 8;
 
-const MIN_RATING = 1;
-const MAX_RATING = 5;
-
 const MIN_GUESTS = 1;
 const MAX_GUESTS = 10;
 
@@ -40,7 +37,6 @@ export class TSVOfferGenerator implements OfferGenerator {
     const isPremium = getRandomItem([true, false]);
     const isFavorite = getRandomItem([true, false]);
 
-    const rating = generateRandomValue(MIN_RATING, MAX_RATING).toString();
     const type = getRandomItem(Object.values(OfferType));
     const bedrooms = generateRandomValue(MIN_ROOMS, MAX_ROOMS).toString();
     const maxAdults = generateRandomValue(MIN_GUESTS, MAX_GUESTS).toString();
@@ -53,7 +49,7 @@ export class TSVOfferGenerator implements OfferGenerator {
     return [
       title, description, dateOfPublication,
       city, previewImage, images, isPremium,
-      isFavorite, rating, type, bedrooms,
+      isFavorite, type, bedrooms,
       maxAdults, price, goods, host,
       location
     ].join('\t');
