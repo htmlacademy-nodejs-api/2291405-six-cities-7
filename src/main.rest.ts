@@ -8,6 +8,7 @@ import { createHostContainer } from './shared/modules/host/index.js';
 import { createLocationContainer } from './shared/modules/location/index.js';
 import { createCityContainer } from './shared/modules/city/index.js';
 import { createOfferContainer } from './shared/modules/offer/index.js';
+import { createCommentContainer } from './shared/modules/comment/index.js';
 
 async function bootstrap() {
   const appContainer = Container.merge(
@@ -15,7 +16,8 @@ async function bootstrap() {
     createHostContainer(),
     createCityContainer(),
     createLocationContainer(),
-    createOfferContainer()
+    createOfferContainer(),
+    createCommentContainer()
   );
   const application = appContainer.get<RestApplication>(Component.RestApplication);
   await application.init();

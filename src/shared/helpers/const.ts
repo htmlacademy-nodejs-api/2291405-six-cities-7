@@ -32,3 +32,8 @@ export enum OfferType {
   room = 'room',
   hotel = 'hotel'
 }
+
+export enum SortType {
+  Asc = 1,
+  Desc = -1
+}

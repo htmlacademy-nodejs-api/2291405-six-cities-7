@@ -17,5 +17,6 @@ export {
   Commands,
   CITIES,
   GOODS,
-  OfferType
+  OfferType,
+  SortType
 } from './const.js';

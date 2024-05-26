@@ -15,6 +15,10 @@ export class DefaultCityService implements CityService {
     @inject(Component.CityModel) private readonly cityModel: types.ModelType<CityEntity>,
   ) {}
 
+  public async find(): Promise<DocumentType<CityEntity>[]> {
+    return await this.cityModel.find().exec();
+  }
+
   public async create(dto: CreateCityDto): Promise<DocumentType<CityEntity>> {
     const result = await this.cityModel.create(dto);
     this.logger.info(`New city created: ${dto.name}`);
@@ -23,11 +27,11 @@ export class DefaultCityService implements CityService {
   }
 
   public async findById(id: string): Promise<DocumentType<CityEntity> | null> {
-    return this.cityModel.findById(id);
+    return this.cityModel.findById(id).exec();
   }
 
   public async findByName(name: string): Promise<DocumentType<CityEntity> | null> {
-    return this.cityModel.findOne({ name });
+    return this.cityModel.findOne({ name }).exec();
   }
 
   public async findOrCreate(dto: CreateCityDto): Promise<DocumentType<CityEntity>> {
