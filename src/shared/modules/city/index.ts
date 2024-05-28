@@ -7,6 +7,10 @@ export {
 } from './dto/create-city.dto.js';
 
 export {
+  RequestCityDto
+} from './dto/request-city.dto.js';
+
+export {
   DefaultCityService
 } from './city.service.js';
 
@@ -17,3 +21,11 @@ export {
 export {
   CityService
 } from './city-service.interface.js';
+
+export {
+  CityController
+} from './city.controller.js';
+
+export {
+  CityRdo
+} from './rdo/city.rdo.js';

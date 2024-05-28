@@ -8,4 +8,5 @@ export interface LocationService {
   findById(locationId: string): Promise<DocumentType<LocationEntity> | null>;
   findByAttributes(latitude: number, longitude: number): Promise<DocumentType<LocationEntity> | null>;
   findOrCreate(dto: CreateLocationDto): Promise<DocumentType<LocationEntity>>;
+  deleteById(id: string): Promise<void>;
 }

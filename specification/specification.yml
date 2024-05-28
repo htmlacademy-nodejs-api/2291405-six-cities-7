@@ -16,6 +16,8 @@ tags:
     description: Действия с городами.
   - name: comments
     description: Действия с комментариями.
+servers:
+- url: http://127.0.0.1:5000/
 paths:
   /users/register:
     post:
@@ -712,7 +714,7 @@ components:
           type: number
           example: 3
 
-        commentsCount:
+        commentCount:
           type: number
           example: 10
 

@@ -1,0 +1,20 @@
+# Города
+## Получить список городов
+GET http://localhost:5000/cities HTTP/1.1
+Content-Type: application/json
+
+###
+
+## Добавить новый город
+POST http://127.0.0.1:5000/cities HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Cologne",
+  "location": {
+    "latitude": 50.938361,
+    "longitude": 6.959974
+  }
+}
+
+###

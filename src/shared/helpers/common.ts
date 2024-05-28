@@ -1,6 +1,6 @@
 import { City } from '../types/index.js';
 import { CITIES } from './const.js';
-
+import { ClassConstructor, plainToInstance } from 'class-transformer';
 
 export function convertStringToBoolean(value: string): boolean {
   return value.toLocaleLowerCase() === 'true';
@@ -46,4 +46,8 @@ export function getMongoURI(
 
 export function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : '';
+}
+
+export function fillDTO<T, V>(someDto: ClassConstructor<T>, plainObject: V) {
+  return plainToInstance(someDto, plainObject, { excludeExtraneousValues: true });
 }

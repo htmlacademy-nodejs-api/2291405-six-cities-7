@@ -34,4 +34,8 @@ export class DefaultLocationService implements LocationService {
 
     return this.create(dto);
   }
+
+  public async deleteById(id: string): Promise<void> {
+    await this.locationModel.findByIdAndDelete(id).exec();
+  }
 }

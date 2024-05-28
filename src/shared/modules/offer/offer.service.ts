@@ -7,7 +7,6 @@ import { OfferEntity } from './offer.entity.js';
 import { Logger } from '../../libs/logger/index.js';
 import { SortType } from '../../helpers/index.js';
 import { Types } from 'mongoose';
-import { UpdateOfferDto } from './dto/update-offer.dto.js';
 
 const addFieldsToOffers = [
   {
@@ -47,23 +46,10 @@ const addFieldsToOffers = [
     $unwind: '$city.location',
   },
   {
-    $project: {
-      price:1,
-      title:1,
-      type:1,
-      isFavorite:1,
-      dateOfPublication:1,
-      previewImage:1,
-      isPremium:1,
-      rating:1,
-      commentCount:1,
-      'city._id': 1,
-      'city.name': 1,
-      'city.location': 1
-    }
-  },
-  {
-    $unset: ['comments']
+    $unset: [
+      'comments',
+      'city._id'
+    ]
   },
   {
     $sort: { createAt: SortType.Desc }
@@ -86,34 +72,16 @@ export class DefaultOfferService implements OfferService {
     return this.findById(offer.id);
   }
 
-  public async updateById(id: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {
+  public async updateById(id: string, dto: CreateOfferDto): Promise<DocumentType<OfferEntity> | null> {
     const offer = await this.offerModel.findByIdAndUpdate(id, dto, {new: true}).exec();
     return this.findById(offer?.id);
   }
 
   public async findById(id: string): Promise<DocumentType<OfferEntity> | null> {
     const offers = await this.offerModel.aggregate([
+      ...addFieldsToOffers,
       {
         $match: { _id: new Types.ObjectId(id) }
-      },
-      {
-        $lookup: {
-          from: 'comments',
-          localField: '_id',
-          foreignField: 'offerId',
-          as: 'comments'
-        }
-      },
-      {
-        $lookup: {
-          from: 'cities',
-          localField: 'cityId',
-          foreignField: '_id',
-          as: 'city'
-        }
-      },
-      {
-        $unwind: '$city'
       },
       {
         $lookup: {
@@ -127,41 +95,15 @@ export class DefaultOfferService implements OfferService {
         $unwind: '$host'
       },
       {
-        $addFields: {
-          commentCount: { $size: '$comments' },
-          rating: { $avg: '$comments.rating' }
-        }
-      },
-      {
         $lookup: {
           from: 'locations',
-          localField: 'city.locationId',
+          localField: 'locationId',
           foreignField: '_id',
-          as: 'city.location',
+          as: 'location',
         }
       },
       {
-        $unwind: '$city.location',
-      },
-      {
-        $unset: [
-          'comments',
-          'createdAt',
-          'updatedAt',
-          'hostId',
-          'host.password',
-          'host.createdAt',
-          'host.updatedAt',
-          'cityId',
-          'locationId',
-          'location.createdAt',
-          'location.updatedAt',
-          'city.createdAt',
-          'city.updatedAt',
-          'city.locationId',
-          'city.location.createdAt',
-          'city.location.updatedAt'
-        ]
+        $unwind: '$location',
       },
       {
         $sort: { createAt: SortType.Desc }
@@ -205,7 +147,7 @@ export class DefaultOfferService implements OfferService {
       ...addFieldsToOffers,
       {
         $match: {
-          'city._id': new Types.ObjectId(cityId),
+          'cityId': new Types.ObjectId(cityId),
           isPremium: true
         }
       },

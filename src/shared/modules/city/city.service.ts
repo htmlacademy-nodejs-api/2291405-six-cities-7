@@ -6,7 +6,21 @@ import { CreateCityDto } from './dto/create-city.dto.js';
 import { Component } from '../../types/index.js';
 import { CityEntity } from './city.entity.js';
 import { Logger } from '../../libs/logger/index.js';
+import { Types } from 'mongoose';
 
+const addLocationToCity = [
+  {
+    $lookup: {
+      from: 'locations',
+      localField: 'locationId',
+      foreignField: '_id',
+      as: 'location',
+    }
+  },
+  {
+    $unwind: '$location',
+  }
+];
 
 @injectable()
 export class DefaultCityService implements CityService {
@@ -15,8 +29,8 @@ export class DefaultCityService implements CityService {
     @inject(Component.CityModel) private readonly cityModel: types.ModelType<CityEntity>,
   ) {}
 
-  public async find(): Promise<DocumentType<CityEntity>[]> {
-    return await this.cityModel.find().exec();
+  public async findAll(): Promise<DocumentType<CityEntity>[]> {
+    return await this.cityModel.aggregate([...addLocationToCity]).exec();
   }
 
   public async create(dto: CreateCityDto): Promise<DocumentType<CityEntity>> {
@@ -27,7 +41,14 @@ export class DefaultCityService implements CityService {
   }
 
   public async findById(id: string): Promise<DocumentType<CityEntity> | null> {
-    return this.cityModel.findById(id).exec();
+    const cities = await this.cityModel.aggregate([
+      ...addLocationToCity,
+      {
+        $match: { _id: new Types.ObjectId(id) }
+      }
+    ]).exec();
+
+    return cities[0];
   }
 
   public async findByName(name: string): Promise<DocumentType<CityEntity> | null> {

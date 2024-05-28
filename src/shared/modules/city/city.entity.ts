@@ -9,7 +9,7 @@ export interface CityEntity extends defaultClasses.Base {}
 @modelOptions({
   schemaOptions: {
     collection: 'cities',
-    timestamps: true,
+    timestamps: true
   }
 })
 

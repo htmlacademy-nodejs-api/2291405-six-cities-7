@@ -6,7 +6,7 @@ import { OfferType } from '../helpers/index.js';
 export type Offer = {
   title: string;
   description: string;
-  dateOfPublication: Date;
+  dateOfPublication: string;
   city: City;
   previewImage: string;
   images: string[];

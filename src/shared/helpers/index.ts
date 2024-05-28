@@ -6,7 +6,8 @@ export {
   getRandomItem,
   ParseObject,
   getMongoURI,
-  getErrorMessage
+  getErrorMessage,
+  fillDTO
 } from './common.js';
 
 export {
