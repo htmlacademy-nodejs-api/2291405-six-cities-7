@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
-import { BaseController, HttpMethod } from '../../../rest/index.js';
+import { BaseController, HttpError, HttpMethod } from '../../../rest/index.js';
 import { CityService } from './city-service.interface.js';
 import { fillDTO } from '../../helpers/index.js';
 import { CityRdo } from './index.js';
@@ -44,16 +44,15 @@ export class CityController extends BaseController {
     { body }: CreateCityRequest,
     res: Response
   ): Promise<void> {
-    const existCity = await this.cityService.findByName(body.name);
+    const name = body.name as string;
+    const existCity = await this.cityService.findByName(name);
 
     if (existCity) {
-      const existCategoryError = new Error(`City with name «${body.name}» exists.`);
-      this.send(res,
-        StatusCodes.UNPROCESSABLE_ENTITY,
-        { error: existCategoryError.message }
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `City with name:${name} exists.`,
+        'CityController',
       );
-
-      return this.logger.error(existCategoryError.message, existCategoryError);
     }
 
     const location = await this.locationService.findOrCreate(body.location);

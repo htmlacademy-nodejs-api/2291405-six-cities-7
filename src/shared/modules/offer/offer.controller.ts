@@ -1,6 +1,5 @@
 import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
-//import { StatusCodes } from 'http-status-codes';
 
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
@@ -14,10 +13,14 @@ import { LocationService } from '../location/index.js';
 import { CityService } from '../city/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { CommentService } from '../comment/index.js';
+import dayjs from 'dayjs';
+import { ParamOfferId } from './type/param-offerid.type.js';
+import { UpdateOfferDto } from './dto/update-offer.dto.js';
 
 
 @injectable()
 export class OfferController extends BaseController {
+
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.OfferService) private readonly offerService: OfferService,
@@ -66,6 +69,7 @@ export class OfferController extends BaseController {
     { body }: CreateOfferRequest,
     res: Response
   ): Promise<void> {
+    const dateOfPublication = dayjs().toISOString();
     const location = await this.locationService.findOrCreate(body.location);
 
     let city = await this.cityService.findByName(body.city.name);
@@ -80,7 +84,7 @@ export class OfferController extends BaseController {
     const result = await this.offerService.create({
       title: body.title,
       description: body.description,
-      dateOfPublication: body.dateOfPublication,
+      dateOfPublication: dateOfPublication,
       cityId: city.id,
       previewImage: body.previewImage,
       images: body.images,
@@ -98,8 +102,8 @@ export class OfferController extends BaseController {
     this.created(res, fillDTO(OfferRdo, result));
   }
 
-  public async delete(req: Request, res: Response): Promise<void> {
-    const offerId = req.params['id'];
+  public async delete({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+    const { offerId } = params;
     const existOffer = await this.offerService.findById(offerId);
 
     if (!existOffer) {
@@ -113,54 +117,13 @@ export class OfferController extends BaseController {
     const deletedCommentCount = await this.commentService.deleteByOfferId(offerId);
     await this.locationService.deleteById(existOffer.locationId.toString());
 
-    await this.offerService.deleteById(req.params['id']);
+    await this.offerService.deleteById(offerId);
 
     this.ok(res, { message:  `Offer with ID:${offerId} has been deleted (${deletedCommentCount} comment removed).`});
   }
 
-  public async update({ body, params }: CreateOfferRequest, res: Response): Promise<void> {
-    const offerId = params['id'] as string;
-    const existOffer = await this.offerService.findById(offerId);
-
-    if (!existOffer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with ID:${offerId} not found.`,
-        'OfferController',
-      );
-    }
-
-    const location = await this.locationService.findOrCreate(body.location);
-
-    let city = await this.cityService.findByName(body.city.name);
-    if (!city) {
-      const cityLocation = await this.locationService.findOrCreate(body.city.location);
-      city = await this.cityService.create({
-        name: body.city.name,
-        locationId: cityLocation.id
-      });
-    }
-
-    const updatedOffer = await this.offerService.updateById(
-      offerId,
-      {
-        title: body.title,
-        description: body.description,
-        dateOfPublication: body.dateOfPublication,
-        cityId: city.id,
-        previewImage: body.previewImage,
-        images: body.images,
-        isPremium: body.isPremium,
-        isFavorite: body.isFavorite,
-        type: body.type,
-        bedrooms: body.bedrooms,
-        maxAdults: body.maxAdults,
-        price: body.price,
-        goods: body.goods,
-        hostId: body.hostId,
-        locationId: location.id
-      });
-
+  public async update({ body, params }: Request<ParamOfferId, unknown, UpdateOfferDto>, res: Response): Promise<void> {
+    const updatedOffer = await this.offerService.updateById(params.offerId, body);
     this.ok(res, updatedOffer);
   }
 }

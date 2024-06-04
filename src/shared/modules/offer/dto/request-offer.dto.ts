@@ -5,7 +5,6 @@ import { CreateLocationDto } from '../../location/index.js';
 export class RequestOfferDto {
   public title: string;
   public description: string;
-  public dateOfPublication: string;
   public city: CityRdo;
   public previewImage: string;
   public images: string[];

@@ -30,7 +30,7 @@ export class DefaultCityService implements CityService {
   ) {}
 
   public async findAll(): Promise<DocumentType<CityEntity>[]> {
-    return await this.cityModel.aggregate([...addLocationToCity]).exec();
+    return this.cityModel.aggregate([...addLocationToCity]).exec();
   }
 
   public async create(dto: CreateCityDto): Promise<DocumentType<CityEntity>> {
@@ -52,7 +52,7 @@ export class DefaultCityService implements CityService {
   }
 
   public async findByName(name: string): Promise<DocumentType<CityEntity> | null> {
-    return this.cityModel.findOne({ name }).exec();
+    return this.cityModel.findOne({ name });
   }
 
   public async findOrCreate(dto: CreateCityDto): Promise<DocumentType<CityEntity>> {

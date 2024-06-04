@@ -5,7 +5,7 @@ import { LocationRdo } from '../../location/index.js';
 
 export class DetailOfferRdo {
   @Expose()
-  public _id: string;
+  public id: string;
 
   @Expose()
   public title: string;
@@ -33,7 +33,7 @@ export class DetailOfferRdo {
   public isFavorite: boolean;
 
   @Expose()
-  public rating: boolean;
+  public rating: number;
 
   @Expose()
   public type: string;
@@ -59,5 +59,5 @@ export class DetailOfferRdo {
   public location: LocationRdo;
 
   @Expose()
-  public commentCount: boolean;
+  public commentCount: number;
 }

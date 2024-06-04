@@ -3,7 +3,7 @@ import { CityRdo } from '../../city/index.js';
 
 export class OfferRdo {
   @Expose()
-  public _id: string;
+  public id: string;
 
   @Expose()
   public price: number;
@@ -30,7 +30,7 @@ export class OfferRdo {
   public rating: boolean;
 
   @Expose()
-  public commentCount: boolean;
+  public commentCount: number;
 
   @Expose()
   @Type(() => CityRdo)

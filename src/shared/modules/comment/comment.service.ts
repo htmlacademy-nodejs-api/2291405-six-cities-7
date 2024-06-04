@@ -9,7 +9,7 @@ import { SortType } from '../../helpers/index.js';
 
 @injectable()
 export class DefaultCommentService implements CommentService {
-  private readonly COMMETS_LIMIT: number = 50;
+  private readonly COMMENTS_LIMIT = 50;
 
   constructor(
     @inject(Component.CommentModel) private readonly commentModel: types.ModelType<CommentEntity>
@@ -23,15 +23,13 @@ export class DefaultCommentService implements CommentService {
   public async findByOfferId(offerId: string): Promise<DocumentType<CommentEntity>[]> {
     return this.commentModel
       .find({offerId})
-      .sort({createAt: SortType.Desc})
-      .limit(this.COMMETS_LIMIT)
+      .sort({createdAt: SortType.Desc})
+      .limit(this.COMMENTS_LIMIT)
       .populate('hostId');
   }
 
   public async deleteByOfferId(offerId: string): Promise<number> {
-    const result = await this.commentModel
-      .deleteMany({offerId})
-      .exec();
+    const result = await this.commentModel.deleteMany({offerId});
 
     return result.deletedCount;
   }
