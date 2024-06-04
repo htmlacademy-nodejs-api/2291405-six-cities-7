@@ -7,6 +7,10 @@ export {
 } from './dto/create-host.dto.js';
 
 export {
+  HostRdo
+} from './rdo/host.rdo.js';
+
+export {
   DefaultHostService
 } from './host.service.js';
 

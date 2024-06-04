@@ -3,7 +3,7 @@ import { OfferType } from '../../../helpers/index.js';
 export class CreateOfferDto {
   public title: string;
   public description: string;
-  public dateOfPublication: Date;
+  public dateOfPublication: string;
   public cityId: string;
   public previewImage: string;
   public images: string[];

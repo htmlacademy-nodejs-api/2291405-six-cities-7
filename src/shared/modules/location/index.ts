@@ -7,6 +7,10 @@ export {
 } from './dto/create-location.dto.js';
 
 export {
+  LocationRdo
+} from './rdo/location.rdo.js';
+
+export {
   DefaultLocationService
 } from './location.service.js';
 

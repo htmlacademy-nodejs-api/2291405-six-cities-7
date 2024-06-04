@@ -41,7 +41,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     return {
       title,
       description,
-      dateOfPublication: new Date(dateOfPublication),
+      dateOfPublication: dateOfPublication,
       city: this.parseCity(city),
       previewImage,
       images: images.split(';'),
