@@ -18,3 +18,7 @@ export {
 export {
   OfferService
 } from './offer-service.interface.js';
+
+export {
+  ParamOfferId
+} from './type/param-offerid.type.js';

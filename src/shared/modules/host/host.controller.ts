@@ -8,9 +8,11 @@ import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { HostRdo } from './rdo/host.rdo.js';
 import { LoginHostRequest } from './login-host-request.type.js';
-import { BaseController, HttpMethod, HttpError } from '../../../rest/index.js';
 import { HostService } from './host-service.interface.js';
 import { CreateHostRequest } from './create-host-request.type.js';
+import { BaseController, HttpMethod, HttpError, ValidateDtoMiddleware } from '../../libs/rest/index.js';
+import { CreateHostDto } from './dto/create-host.dto.js';
+import { LoginHostDto } from './dto/login-host.dto.js';
 
 @injectable()
 export class HostController extends BaseController {
@@ -22,8 +24,8 @@ export class HostController extends BaseController {
     super(logger);
     this.logger.info('Register routes for UserController…');
 
-    this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create });
-    this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login });
+    this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create,middlewares: [new ValidateDtoMiddleware(CreateHostDto)] });
+    this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginHostDto)]});
   }
 
   public async create(

@@ -1,15 +1,14 @@
 import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
-import { BaseController, HttpError, HttpMethod } from '../../../rest/index.js';
 import { CityService } from './city-service.interface.js';
 import { fillDTO } from '../../helpers/index.js';
-import { CityRdo } from './index.js';
+import { CityRdo, RequestCityDto } from './index.js';
 import { LocationService } from '../location/index.js';
 import { CreateCityRequest } from './create-city-request.type.js';
+import { BaseController, HttpMethod, HttpError, ValidateObjectIdMiddleware, ValidateDtoMiddleware, DocumentExistsMiddleware } from '../../libs/rest/index.js';
 
 
 @injectable()
@@ -24,8 +23,8 @@ export class CityController extends BaseController {
     this.logger.info('Register routes for CityController…');
 
     this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.gets });
-    this.addRoute({ path: '/:id', method: HttpMethod.Get, handler: this.get });
-    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
+    this.addRoute({ path: '/:cityId', method: HttpMethod.Get, handler: this.get, middlewares: [new ValidateObjectIdMiddleware('cityId'), new DocumentExistsMiddleware(this.cityService, 'City', 'cityId')] });
+    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(RequestCityDto)] });
   }
 
   public async gets(_req: Request, res: Response): Promise<void> {
@@ -34,8 +33,9 @@ export class CityController extends BaseController {
     this.ok(res, responseData);
   }
 
-  public async get(req: Request, res: Response): Promise<void> {
-    const city = await this.cityService.findById(req.params['id']);
+  public async get({ params }: Request, res: Response): Promise<void> {
+    const { cityId } = params;
+    const city = await this.cityService.findById(cityId);
     const responseData = fillDTO(CityRdo, city);
     this.ok(res, responseData);
   }
@@ -49,8 +49,8 @@ export class CityController extends BaseController {
 
     if (existCity) {
       throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `City with name:${name} exists.`,
+        StatusCodes.CONFLICT,
+        `City with name:${name} already exists.`,
         'CityController',
       );
     }
