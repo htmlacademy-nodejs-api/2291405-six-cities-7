@@ -6,7 +6,7 @@ import { Component } from '../../types/index.js';
 import { DefaultCityService } from './city.service.js';
 import { CityEntity, CityModel } from './city.entity.js';
 import { CityController } from './index.js';
-import { Controller } from '../../../rest/controller/controller.interface.js';
+import { Controller } from '../../libs/rest/controller/controller.interface.js';
 
 export function createCityContainer() {
   const cityContainer = new Container();

@@ -16,8 +16,6 @@ tags:
     description: Действия с городами.
   - name: comments
     description: Действия с комментариями.
-servers:
-- url: http://127.0.0.1:5000/
 paths:
   /users/register:
     post:
@@ -486,6 +484,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/cities'
+
+    post:
+      tags:
+        - cities
+      summary: Создание нового города
+      description: Регистрирует новый город.
+
+      parameters:
+        - name: X-Token
+          in: header
+          description: Авторизационный токен пользователя
+          required: true
+          schema:
+            type: string
+            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+      requestBody:
+        description: Информация для создания нового города.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/city'
+        required: true
+
+      responses:
+        "201":
+          description: Город успешно создано.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/city'
+
+        "401":
+          description: Ошибка валидации данных.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validationErrorMessage'
+        "403":
+          description: Пользователь не авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
 
   /cities/{cityId}:
     get:

@@ -29,3 +29,7 @@ export {
 export {
   CityRdo
 } from './rdo/city.rdo.js';
+
+export {
+  ParamCityId
+} from './type/param-cityid.type.js';

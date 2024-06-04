@@ -29,6 +29,11 @@ export class DefaultCityService implements CityService {
     @inject(Component.CityModel) private readonly cityModel: types.ModelType<CityEntity>,
   ) {}
 
+  public async exists(documentId: string): Promise<boolean> {
+    return (await this.cityModel
+      .exists({_id: documentId})) !== null;
+  }
+
   public async findAll(): Promise<DocumentType<CityEntity>[]> {
     return this.cityModel.aggregate([...addLocationToCity]).exec();
   }

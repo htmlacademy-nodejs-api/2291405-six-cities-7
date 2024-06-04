@@ -5,8 +5,8 @@ import { HostService } from './host-service.interface.js';
 import { Component } from '../../types/index.js';
 import { DefaultHostService } from './host.service.js';
 import { HostEntity, HostModel } from './host.entity.js';
-import { Controller } from '../../../rest/index.js';
 import { HostController } from './host.controller.js';
+import { Controller } from '../../libs/rest/index.js';
 
 export function createHostContainer() {
   const hostContainer = new Container();

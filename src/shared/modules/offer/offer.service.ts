@@ -9,7 +9,7 @@ import { GOODS, OfferType, SortType } from '../../helpers/index.js';
 import { Types } from 'mongoose';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
 import { StatusCodes } from 'http-status-codes';
-import { HttpError } from '../../../rest/index.js';
+import { HttpError } from '../../libs/rest/index.js';
 
 const addFieldsToOffers = [
   {
@@ -157,6 +157,11 @@ export class DefaultOfferService implements OfferService {
         $limit: count
       }
     ]).exec();
+  }
+
+  public async exists(documentId: string): Promise<boolean> {
+    return (await this.offerModel
+      .exists({_id: documentId})) !== null;
   }
 
   public async findFavorites(): Promise<DocumentType<OfferEntity>[]> {

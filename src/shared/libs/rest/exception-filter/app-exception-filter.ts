@@ -3,8 +3,8 @@ import { StatusCodes } from 'http-status-codes';
 import { NextFunction, Request, Response } from 'express';
 
 import { ExceptionFilter } from './exception-filter.interface.js';
-import { Component } from '../../shared/types/index.js';
-import { Logger } from '../../shared/libs/logger/index.js';
+import { Component } from '../../../types/index.js';
+import { Logger } from '../../logger/index.js';
 
 
 @injectable()
