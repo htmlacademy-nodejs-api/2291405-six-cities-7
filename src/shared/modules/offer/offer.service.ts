@@ -5,13 +5,11 @@ import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { Component } from '../../types/index.js';
 import { OfferEntity } from './offer.entity.js';
 import { Logger } from '../../libs/logger/index.js';
-import { SortType } from '../../helpers/index.js';
+import { GOODS, OfferType, SortType } from '../../helpers/index.js';
 import { Types } from 'mongoose';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
-import { CityEntity } from '../city/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { HttpError } from '../../../rest/index.js';
-import { LocationService } from '../location/index.js';
 
 const addFieldsToOffers = [
   {
@@ -70,34 +68,35 @@ export class DefaultOfferService implements OfferService {
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>,
-    @inject(Component.CityModel) private readonly cityModel: types.ModelType<CityEntity>,
-    @inject(Component.LocationService) private readonly locationService: LocationService
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity> | null> {
+
+    if (!(dto.type in OfferType)) {
+      throw new HttpError(StatusCodes.BAD_REQUEST, 'Type Offer not exists', 'DefaultOfferService');
+    }
+
+    if (!(dto.goods.some((good) => GOODS.includes(good)))) {
+      throw new HttpError(StatusCodes.BAD_REQUEST, 'Some GOOD not exists', 'DefaultOfferService');
+    }
+
     const offer = await this.offerModel.create(dto);
     this.logger.info(`New offer created: ${dto.title}`);
     return this.findById(offer.id);
   }
 
   public async updateById(id: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {
-    const existOffer = await this.offerModel.findById(id);
 
-    if (!existOffer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with ID:${id} not found.`,
-        'OfferController',
-      );
+    if (dto.type) {
+      if (!(dto.type in OfferType)) {
+        throw new HttpError(StatusCodes.BAD_REQUEST, 'Type Offer not exists', 'DefaultOfferService');
+      }
     }
 
-    if (dto.location) {
-      await this.locationService.findOrCreate(dto.location);
-    }
-
-    const foundCity = await this.cityModel.findById(dto.cityId);
-    if (!foundCity) {
-      throw new HttpError(StatusCodes.BAD_REQUEST, 'City not exists', 'DefaultOfferService');
+    if (dto.goods) {
+      if (!(dto.goods.some((good) => GOODS.includes(good)))) {
+        throw new HttpError(StatusCodes.BAD_REQUEST, 'Some GOOD not exists', 'DefaultOfferService');
+      }
     }
 
     const offer = await this.offerModel.findByIdAndUpdate(id, dto, {new: true}).exec();

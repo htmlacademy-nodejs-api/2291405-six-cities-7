@@ -34,9 +34,9 @@ export class OfferController extends BaseController {
 
     this.addRoute({ path: '/favorites', method: HttpMethod.Get, handler: this.getFavorites });
     this.addRoute({ path: '/:id/premium', method: HttpMethod.Get, handler: this.getPremiumForCity });
-    this.addRoute({ path: '/:id', method: HttpMethod.Get, handler: this.get });
-    this.addRoute({ path: '/:id', method: HttpMethod.Delete, handler: this.delete });
-    this.addRoute({ path: '/:id', method: HttpMethod.Put, handler: this.update });
+    this.addRoute({ path: '/:offerId', method: HttpMethod.Get, handler: this.get });
+    this.addRoute({ path: '/:offerId', method: HttpMethod.Delete, handler: this.delete });
+    this.addRoute({ path: '/:offerId', method: HttpMethod.Put, handler: this.update });
     this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.gets });
     this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
   }
@@ -47,14 +47,16 @@ export class OfferController extends BaseController {
     this.ok(res, responseData);
   }
 
-  public async get({ params }: Request, res: Response): Promise<void> {
-    const offer = await this.offerService.findById(params['id']);
+  public async get({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+    const { offerId } = params;
+    const offer = await this.offerService.findById(offerId);
     const responseData = fillDTO(DetailOfferRdo, offer);
     this.ok(res, responseData);
   }
 
-  public async getPremiumForCity({ params }: Request, res: Response): Promise<void> {
-    const offers = await this.offerService.findPremiumByCityId(params['id']);
+  public async getPremiumForCity({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+    const { offerId } = params;
+    const offers = await this.offerService.findPremiumByCityId(offerId);
     const responseData = fillDTO(OfferRdo, offers);
     this.ok(res, responseData);
   }
@@ -81,7 +83,7 @@ export class OfferController extends BaseController {
       });
     }
 
-    const result = await this.offerService.create({
+    const createdOffer = await this.offerService.create({
       title: body.title,
       description: body.description,
       dateOfPublication: dateOfPublication,
@@ -99,7 +101,7 @@ export class OfferController extends BaseController {
       locationId: location.id
     });
 
-    this.created(res, fillDTO(OfferRdo, result));
+    this.created(res, fillDTO(OfferRdo, createdOffer));
   }
 
   public async delete({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
@@ -123,7 +125,29 @@ export class OfferController extends BaseController {
   }
 
   public async update({ body, params }: Request<ParamOfferId, unknown, UpdateOfferDto>, res: Response): Promise<void> {
+    const offerId = params.offerId;
+    const existOffer = await this.offerService.findById(offerId);
+
+    if (!existOffer) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Offer with ID:${offerId} not found.`,
+        'OfferController',
+      );
+    }
+
+    if (body.location) {
+      await this.locationService.findOrCreate(body.location);
+    }
+
+    if (body.cityId) {
+      const foundCity = await this.cityService.findById(body.cityId);
+      if (!foundCity) {
+        throw new HttpError(StatusCodes.BAD_REQUEST, 'City not exists', 'DefaultOfferService');
+      }
+    }
+
     const updatedOffer = await this.offerService.updateById(params.offerId, body);
-    this.ok(res, updatedOffer);
+    this.ok(res, fillDTO(DetailOfferRdo, updatedOffer));
   }
 }
