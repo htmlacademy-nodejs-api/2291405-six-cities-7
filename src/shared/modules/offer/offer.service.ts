@@ -2,14 +2,11 @@ import { DocumentType, types } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
 import { OfferService } from './offer-service.interface.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
-import { Component } from '../../types/index.js';
+import { Component, SortType } from '../../types/index.js';
 import { OfferEntity } from './offer.entity.js';
 import { Logger } from '../../libs/logger/index.js';
-import { GOODS, OfferType, SortType } from '../../helpers/index.js';
 import { Types } from 'mongoose';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
-import { StatusCodes } from 'http-status-codes';
-import { HttpError } from '../../libs/rest/index.js';
 
 const addFieldsToOffers = [
   {
@@ -21,17 +18,6 @@ const addFieldsToOffers = [
     }
   },
   {
-    $lookup: {
-      from: 'cities',
-      localField: 'cityId',
-      foreignField: '_id',
-      as: 'city'
-    }
-  },
-  {
-    $unwind: '$city'
-  },
-  {
     $addFields: {
       commentCount: { $size: '$comments' },
       rating: { $avg: '$comments.rating' },
@@ -39,20 +25,8 @@ const addFieldsToOffers = [
     }
   },
   {
-    $lookup: {
-      from: 'locations',
-      localField: 'city.locationId',
-      foreignField: '_id',
-      as: 'city.location',
-    }
-  },
-  {
-    $unwind: '$city.location',
-  },
-  {
     $unset: [
-      'comments',
-      'city._id'
+      'comments'
     ]
   },
   {
@@ -71,34 +45,12 @@ export class DefaultOfferService implements OfferService {
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity> | null> {
-
-    if (!(dto.type in OfferType)) {
-      throw new HttpError(StatusCodes.BAD_REQUEST, 'Type Offer not exists', 'DefaultOfferService');
-    }
-
-    if (!(dto.goods.some((good) => GOODS.includes(good)))) {
-      throw new HttpError(StatusCodes.BAD_REQUEST, 'Some GOOD not exists', 'DefaultOfferService');
-    }
-
     const offer = await this.offerModel.create(dto);
     this.logger.info(`New offer created: ${dto.title}`);
     return this.findById(offer.id);
   }
 
   public async updateById(id: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {
-
-    if (dto.type) {
-      if (!(dto.type in OfferType)) {
-        throw new HttpError(StatusCodes.BAD_REQUEST, 'Type Offer not exists', 'DefaultOfferService');
-      }
-    }
-
-    if (dto.goods) {
-      if (!(dto.goods.some((good) => GOODS.includes(good)))) {
-        throw new HttpError(StatusCodes.BAD_REQUEST, 'Some GOOD not exists', 'DefaultOfferService');
-      }
-    }
-
     const offer = await this.offerModel.findByIdAndUpdate(id, dto, {new: true}).exec();
     return this.findById(offer?.id);
   }
@@ -119,17 +71,6 @@ export class DefaultOfferService implements OfferService {
       },
       {
         $unwind: '$host'
-      },
-      {
-        $lookup: {
-          from: 'locations',
-          localField: 'locationId',
-          foreignField: '_id',
-          as: 'location',
-        }
-      },
-      {
-        $unwind: '$location',
       },
       {
         $sort: { createAt: SortType.Desc }
@@ -160,8 +101,8 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async exists(documentId: string): Promise<boolean> {
-    return (await this.offerModel
-      .exists({_id: documentId})) !== null;
+    const document = await this.offerModel.exists({_id: documentId});
+    return document !== null;
   }
 
   public async findFavorites(): Promise<DocumentType<OfferEntity>[]> {
@@ -173,11 +114,11 @@ export class DefaultOfferService implements OfferService {
     ]).exec();
   }
 
-  public async findPremiumByCityId(cityId: string): Promise<DocumentType<OfferEntity>[]> {
+  public async findPremiumByCityId(city: string): Promise<DocumentType<OfferEntity>[]> {
     return this.offerModel.aggregate([
       {
         $match: {
-          'cityId': new Types.ObjectId(cityId),
+          'city.name': city,
           isPremium: true
         }
       },

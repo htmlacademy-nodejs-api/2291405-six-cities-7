@@ -1,6 +1,10 @@
+import { IsString, ValidateNested } from 'class-validator';
 import { Location } from './location.type.js';
 
-export type City = {
-  location: Location
-  name: string;
+export class City {
+  @IsString()
+  public name: string;
+
+  @ValidateNested()
+  public location: Location;
 }

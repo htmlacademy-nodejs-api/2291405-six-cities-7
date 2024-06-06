@@ -1,9 +1,6 @@
 import { Ref, Severity, defaultClasses, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
-import { Location, City, Host } from '../../types/index.js';
-import { LocationEntity } from '../location/index.js';
-import { CityEntity } from '../city/index.js';
-import { OfferType } from '../../helpers/index.js';
+import { Location, Host, City, OfferType } from '../../types/index.js';
 import { HostEntity } from '../host/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -22,51 +19,49 @@ export interface OfferEntity extends defaultClasses.Base {}
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({ trim: true, required: true })
-  public title!: string;
+  public title: string;
 
-  @prop({trim: true})
-  public description!: string;
+  @prop({ trim: true, required: true })
+  public description: string;
 
-  @prop()
-  public dateOfPublication!: Date;
+  @prop({ required: true })
+  public dateOfPublication: Date;
 
-  @prop({
-    ref: CityEntity,
-    required: true
-  })
-  public cityId: Ref<City>;
+  @prop({ required: true })
+  public city: City;
 
-  @prop()
-  public previewImage!: string;
+  @prop({ required: true })
+  public previewImage: string;
 
-  @prop()
+  @prop({ required: true })
   public images: string[];
 
-  @prop({default: false})
+  @prop({default: false, required: true })
   public isPremium: boolean;
 
-  @prop({default: false})
+  @prop({default: false, required: true })
   public isFavorite: boolean;
 
-  @prop({default: 1})
+  @prop({default: 1, required: true })
   public rating: number;
 
   @prop({
     type: () => String,
-    enum: OfferType
+    enum: OfferType,
+    required: true
   })
   public type: OfferType;
 
-  @prop({default: 0})
+  @prop({default: 1, required: true })
   public bedrooms: number;
 
-  @prop()
+  @prop({default: 1, required: true })
   public maxAdults: number;
 
   @prop({required: true, default: 0})
-  public price!: number;
+  public price: number;
 
-  @prop({default: []})
+  @prop({default: [], required: true })
   public goods: string[];
 
   @prop({
@@ -75,11 +70,8 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   })
   public hostId: Ref<Host>;
 
-  @prop({
-    ref: LocationEntity,
-    required: true
-  })
-  public locationId: Ref<Location>;
+  @prop({ required: true })
+  public location: Location;
 }
 
 export const OfferModel = getModelForClass(OfferEntity);

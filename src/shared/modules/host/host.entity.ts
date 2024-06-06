@@ -28,7 +28,7 @@ export class HostEntity extends defaultClasses.TimeStamps implements Host {
   @prop({ required: true, default: false })
   public isPro: boolean;
 
-  @prop({ required: true, default: '' })
+  @prop({ required: true })
   private password?: string;
 
   constructor(hostData: Host) {

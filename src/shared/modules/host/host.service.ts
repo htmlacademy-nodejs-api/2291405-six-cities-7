@@ -6,6 +6,7 @@ import { CreateHostDto } from './dto/create-host.dto.js';
 import { inject, injectable } from 'inversify';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
+import { UpdateHostDto } from './dto/update-host.dto.js';
 
 
 @injectable()
@@ -14,6 +15,11 @@ export class DefaultHostService implements HostService {
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.HostModel) private readonly hostModel: types.ModelType<HostEntity>
   ) {}
+
+  public async exists(documentId: string): Promise<boolean> {
+    const document = await this.hostModel.exists({_id: documentId});
+    return document !== null;
+  }
 
   public async create(dto: CreateHostDto, salt: string): Promise<DocumentType<HostEntity>> {
     const host = new HostEntity(dto);
@@ -41,5 +47,11 @@ export class DefaultHostService implements HostService {
     }
 
     return this.create(dto, salt);
+  }
+
+  public async updateById(hostId: string, dto: UpdateHostDto): Promise<DocumentType<HostEntity> | null> {
+    return this.hostModel
+      .findByIdAndUpdate(hostId, dto, { new: true })
+      .exec();
   }
 }

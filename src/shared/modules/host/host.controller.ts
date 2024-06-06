@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { Logger } from '../../libs/logger/index.js';
@@ -10,9 +10,10 @@ import { HostRdo } from './rdo/host.rdo.js';
 import { LoginHostRequest } from './login-host-request.type.js';
 import { HostService } from './host-service.interface.js';
 import { CreateHostRequest } from './create-host-request.type.js';
-import { BaseController, HttpMethod, HttpError, ValidateDtoMiddleware } from '../../libs/rest/index.js';
+import { BaseController, HttpMethod, HttpError, ValidateDtoMiddleware, ValidateObjectIdMiddleware, UploadFileMiddleware, DocumentExistsMiddleware } from '../../libs/rest/index.js';
 import { CreateHostDto } from './dto/create-host.dto.js';
 import { LoginHostDto } from './dto/login-host.dto.js';
+
 
 @injectable()
 export class HostController extends BaseController {
@@ -24,8 +25,31 @@ export class HostController extends BaseController {
     super(logger);
     this.logger.info('Register routes for UserController…');
 
-    this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create,middlewares: [new ValidateDtoMiddleware(CreateHostDto)] });
-    this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginHostDto)]});
+    this.addRoute({
+      path: '/register',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateHostDto)]
+    });
+    this.addRoute({
+      path: '/login',
+      method: HttpMethod.Post,
+      handler: this.login,
+      middlewares: [
+        new ValidateDtoMiddleware(LoginHostDto),
+        new DocumentExistsMiddleware(this.hostService, 'Host', 'hostId')
+      ]
+    });
+    this.addRoute({
+      path: '/:hostId/avatar',
+      method: HttpMethod.Post,
+      handler: this.updateAvatar,
+      middlewares: [
+        new ValidateObjectIdMiddleware('hostId'),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatarUrl'),
+        new DocumentExistsMiddleware(this.hostService, 'Host', 'hostId')
+      ]
+    });
   }
 
   public async create(
@@ -65,5 +89,11 @@ export class HostController extends BaseController {
       'Not implemented',
       'UserController',
     );
+  }
+
+  public async updateAvatar({file, params}: Request, res: Response): Promise<void> {
+    const { hostId } = params;
+    const updatedHost = await this.hostService.updateById(hostId, { avatarUrl: file?.path });
+    this.ok(res, fillDTO(HostRdo, updatedHost));
   }
 }
