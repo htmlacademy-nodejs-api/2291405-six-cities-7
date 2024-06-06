@@ -92,9 +92,8 @@ export class HostController extends BaseController {
   }
 
   public async updateAvatar({file, params}: Request, res: Response): Promise<void> {
-    const updateHostDto = { avatarUrl: file?.path };
     const { hostId } = params;
-    const updatedHost = await this.hostService.updateById(hostId, updateHostDto);
+    const updatedHost = await this.hostService.updateById(hostId, { avatarUrl: file?.path });
     this.ok(res, fillDTO(HostRdo, updatedHost));
   }
 }

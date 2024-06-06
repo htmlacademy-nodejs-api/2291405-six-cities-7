@@ -101,8 +101,8 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async exists(documentId: string): Promise<boolean> {
-    return (await this.offerModel
-      .exists({_id: documentId})) !== null;
+    const document = await this.offerModel.exists({_id: documentId});
+    return document !== null;
   }
 
   public async findFavorites(): Promise<DocumentType<OfferEntity>[]> {

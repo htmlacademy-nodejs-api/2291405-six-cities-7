@@ -17,8 +17,8 @@ export class DefaultHostService implements HostService {
   ) {}
 
   public async exists(documentId: string): Promise<boolean> {
-    return (await this.hostModel
-      .exists({_id: documentId})) !== null;
+    const document = await this.hostModel.exists({_id: documentId});
+    return document !== null;
   }
 
   public async create(dto: CreateHostDto, salt: string): Promise<DocumentType<HostEntity>> {
