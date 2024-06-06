@@ -47,6 +47,11 @@ export class HostEntity extends defaultClasses.TimeStamps implements Host {
   public getPassword() {
     return this.password;
   }
+
+  public verifyPassword(password: string, salt: string) {
+    const hashPassword = createSHA256(password, salt);
+    return hashPassword === this.password;
+  }
 }
 
 export const HostModel = getModelForClass(HostEntity);

@@ -2,7 +2,6 @@ import {
   MinLength,
   MaxLength,
   IsDateString,
-  IsMongoId,
   IsEnum,
   IsInt,
   Max,
@@ -78,7 +77,6 @@ export class CreateOfferDto {
   @IsIn(GOODS, {each: true, message: OfferValidationMessage.goods.invalidValue })
   public goods: string[];
 
-  @IsMongoId({ message: OfferValidationMessage.hostId.invalidId })
   public hostId: string;
 
   @ValidateNested({ message: OfferValidationMessage.location.invalid })

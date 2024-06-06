@@ -9,9 +9,6 @@ export const CommentValidationMessage = {
     minValue: 'Minimum rating length must be 1',
     maxValue: 'Maximum rating length must be 5'
   },
-  hostId: {
-    invalidId: 'userId field must be a valid id',
-  },
   offerId: {
     invalidId: 'offerId field must be a valid id',
   },

@@ -48,9 +48,6 @@ export const OfferValidationMessage = {
     minValue: 'Minimum price is 100',
     maxValue: 'Maximum price is 100000',
   },
-  hostId: {
-    invalidId: 'userId field must be a valid id',
-  },
   goods: {
     invalidFormat: 'Goods must be string array',
     invalidValue: 'Goods must be Breakfast | Air conditioning | Laptop friendly workspace | Baby seat | Washer | Towels | Fridge',

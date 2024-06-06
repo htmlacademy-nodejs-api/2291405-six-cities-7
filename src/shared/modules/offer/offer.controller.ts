@@ -11,7 +11,7 @@ import { DetailOfferRdo } from './rdo/detail-offer.rdo.js';
 import { CommentService } from '../comment/index.js';
 import dayjs from 'dayjs';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
-import { BaseController, HttpMethod, ValidateObjectIdMiddleware, ValidateDtoMiddleware, DocumentExistsMiddleware } from '../../libs/rest/index.js';
+import { BaseController, HttpMethod, ValidateObjectIdMiddleware, ValidateDtoMiddleware, DocumentExistsMiddleware, PrivateRouteMiddleware } from '../../libs/rest/index.js';
 import { ParamOfferId } from './type/param-offerid.type.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { ValidateCityMiddleware } from '../../libs/rest/middleware/validate-city.middleware.js';
@@ -36,7 +36,8 @@ export class OfferController extends BaseController {
     this.addRoute({
       path: '/favorites',
       method: HttpMethod.Get,
-      handler: this.getFavorites
+      handler: this.getFavorites,
+      middlewares: [new PrivateRouteMiddleware()]
     });
     this.addRoute({
       path: '/:city/premium',
@@ -54,13 +55,17 @@ export class OfferController extends BaseController {
       path: '/:offerId',
       method: HttpMethod.Delete,
       handler: this.delete,
-      middlewares: middlewares
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        ...middlewares
+      ]
     });
     this.addRoute({
       path: '/:offerId',
       method: HttpMethod.Put,
       handler: this.update,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateDtoMiddleware(UpdateOfferDto),
         ...middlewares
       ]
@@ -75,6 +80,7 @@ export class OfferController extends BaseController {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateDtoMiddleware(CreateOfferDto)
       ]
     });
@@ -107,14 +113,15 @@ export class OfferController extends BaseController {
   }
 
   public async create(
-    { body }: CreateOfferRequest,
+    { body, tokenPayload }: CreateOfferRequest,
     res: Response
   ): Promise<void> {
     const dateOfPublication = dayjs().toISOString();
 
     const createdOffer = await this.offerService.create({
       ...body,
-      dateOfPublication: dateOfPublication
+      dateOfPublication: dateOfPublication,
+      hostId: tokenPayload.id
     });
 
     this.created(res, fillDTO(OfferRdo, createdOffer));
