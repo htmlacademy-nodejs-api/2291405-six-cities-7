@@ -1,5 +1,5 @@
+import { Commands } from '../types/command.enum.js';
 import { Command } from './command.interface.js';
-import { Commands } from '../../shared/helpers/const.js';
 import chalk from 'chalk';
 
 

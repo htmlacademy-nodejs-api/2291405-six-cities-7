@@ -1,7 +1,7 @@
 import { Command } from './commands/command.interface.js';
 import { CommandParser } from './command-parser.js';
-import { Commands } from '../shared/helpers/const.js';
 import chalk from 'chalk';
+import { Commands } from './types/command.enum.js';
 
 type CommandCollection = Record<string, Command>;
 

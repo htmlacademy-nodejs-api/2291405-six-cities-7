@@ -1,23 +1,26 @@
-export const CreateOfferValidationMessage = {
+export const OfferValidationMessage = {
   title: {
+    invalidFormat: 'title must be an string',
     minLength: 'Minimum title length must be 10',
     maxLength: 'Maximum title length must be 100',
   },
   description: {
+    invalidFormat: 'description must be an string',
     minLength: 'Minimum description length must be 20',
     maxLength: 'Maximum description length must be 1024',
   },
   dateOfPublication: {
     invalidFormat: 'dateOfPublication must be a valid ISO date',
   },
-  cityId: {
-    invalidId: 'cityId field must be a valid id',
+  city: {
+    invalid: 'city field must be  Paris, Cologne, Brussels, Amsterdam, Hamburg, Dusseldorf',
   },
   previewImage: {
+    invalidFormat: 'previewImage must be an path string for image file',
     maxLength: 'Too short for field «image»',
   },
   images: {
-    invalidFormat: 'images must be an array',
+    invalidFormat: 'images must be an array of path string for image file',
     arrayMinSize: 'Minimum length of array images must be 6',
     arrayMaxSize: 'Maximum length of array images must be 6'
   },
@@ -43,9 +46,16 @@ export const CreateOfferValidationMessage = {
   price: {
     invalidFormat: 'Price must be an integer',
     minValue: 'Minimum price is 100',
-    maxValue: 'Maximum price is 200000',
+    maxValue: 'Maximum price is 100000',
   },
   hostId: {
     invalidId: 'userId field must be a valid id',
   },
-} as const;
+  goods: {
+    invalidFormat: 'Goods must be string array',
+    invalidValue: 'Goods must be Breakfast | Air conditioning | Laptop friendly workspace | Baby seat | Washer | Towels | Fridge',
+  },
+  location: {
+    invalid: 'Location must be an object with latitude and longitude values'
+  }
+};

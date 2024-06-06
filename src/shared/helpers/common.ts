@@ -1,4 +1,3 @@
-import { City } from '../types/index.js';
 import { CITIES } from './const.js';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 
@@ -25,12 +24,9 @@ export function ParseObject(obj: object): string {
   return values.join('\t');
 }
 
-export function getRandomCity(): City {
+export function getRandomCity(): string {
   const name = getRandomItem(Object.keys(CITIES));
-  return {
-    name,
-    location: CITIES[name]
-  };
+  return name;
 }
 
 

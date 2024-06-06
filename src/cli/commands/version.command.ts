@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { Command } from './command.interface.js';
-import { Commands } from '../../shared/helpers/const.js';
+import { Commands } from '../types/command.enum.js';
 
 type PackageJSONConfig = {
   version: string;

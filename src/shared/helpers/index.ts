@@ -15,9 +15,6 @@ export {
 } from './hash.js';
 
 export {
-  Commands,
   CITIES,
   GOODS,
-  OfferType,
-  SortType
 } from './const.js';

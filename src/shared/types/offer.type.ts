@@ -1,7 +1,7 @@
 import { Host } from './host.type.js';
 import { City } from './city.type.js';
 import { Location } from './location.type.js';
-import { OfferType } from '../helpers/index.js';
+import { OfferType } from './offer-type.enum.js';
 
 export type Offer = {
   title: string;

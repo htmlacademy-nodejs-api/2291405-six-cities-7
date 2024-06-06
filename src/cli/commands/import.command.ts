@@ -4,8 +4,6 @@ import { getErrorMessage, getMongoURI } from '../../shared/helpers/index.js';
 import { Offer } from '../../shared/types/offer.type.js';
 import { DefaultHostService, HostModel, HostService } from '../../shared/modules/host/index.js';
 import { DefaultOfferService, OfferModel, OfferService } from '../../shared/modules/offer/index.js';
-import { DefaultLocationService, LocationModel, LocationService } from '../../shared/modules/location/index.js';
-import { DefaultCityService, CityModel, CityService } from '../../shared/modules/city/index.js';
 import { DatabaseClient, MongoDatabaseClient } from '../../shared/libs/database-client/index.js';
 import { DEFAULT_DB_PORT, DEFAULT_USER_PASSWORD } from './command.constant.js';
 import { Logger, PinoLogger } from '../../shared/libs/logger/index.js';
@@ -14,8 +12,6 @@ import { Logger, PinoLogger } from '../../shared/libs/logger/index.js';
 export class ImportCommand implements Command {
   private hostService: HostService;
   private offerService: OfferService;
-  private locationService: LocationService;
-  private cityService: CityService;
   private databaseClient: DatabaseClient;
   private logger: Logger;
   private salt: string;
@@ -27,8 +23,6 @@ export class ImportCommand implements Command {
     this.logger = new PinoLogger();
     this.offerService = new DefaultOfferService(this.logger, OfferModel);
     this.hostService = new DefaultHostService(this.logger, HostModel);
-    this.locationService = new DefaultLocationService(LocationModel);
-    this.cityService = new DefaultCityService(this.logger, CityModel);
     this.databaseClient = new MongoDatabaseClient(this.logger);
   }
 
@@ -42,26 +36,13 @@ export class ImportCommand implements Command {
   }
 
   private async saveOffer(offer: Offer) {
-    const host = await this.hostService.findOrCreate({
-      ...offer.host,
-      password: DEFAULT_USER_PASSWORD
-    }, this.salt);
-
-    const [offerLocation, cityLocation] = await Promise.all([
-      this.locationService.findOrCreate({...offer.location}),
-      this.locationService.findOrCreate({...offer.city.location})
-    ]);
-
-    const city = await this.cityService.findOrCreate({
-      name: offer.city.name,
-      locationId: cityLocation.id
-    });
+    const host = await this.hostService.findOrCreate({...offer.host, password: DEFAULT_USER_PASSWORD}, this.salt);
 
     await this.offerService.create({
       title: offer.title,
       description: offer.description,
       dateOfPublication: offer.dateOfPublication,
-      cityId: city.id,
+      city: offer.city,
       previewImage: offer.previewImage,
       images: offer.images,
       isPremium: offer.isPremium,
@@ -72,7 +53,7 @@ export class ImportCommand implements Command {
       price: offer.price,
       goods: offer.goods,
       hostId: host.id,
-      locationId: offerLocation.id
+      location: offer.location
     });
   }
 

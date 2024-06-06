@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
 
-import { Location, Host } from '../../types/index.js';
+import { Location, Host, OfferType } from '../../types/index.js';
 
 import { OfferGenerator } from './offer-generator.interface.js';
 import { MockServerData } from '../../types/index.js';
-import { generateRandomValue, getRandomItem, getRandomItems, OfferType, GOODS, ParseObject } from '../../helpers/index.js';
+import { generateRandomValue, getRandomItem, getRandomItems, GOODS, ParseObject } from '../../helpers/index.js';
 import { getRandomCity } from '../../helpers/common.js';
 
 const MIN_ROOMS = 1;

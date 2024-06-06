@@ -12,8 +12,6 @@ tags:
     description: Действия с пользователями.
   - name: offers
     description: Действия с предложениями по аренде.
-  - name: cities
-    description: Действия с городами.
   - name: comments
     description: Действия с комментариями.
 paths:
@@ -193,7 +191,7 @@ paths:
           description: Уникальный идентификатор предложения
           required: true
           schema:
-            type: number
+            type: string
             example: 1
 
       responses:
@@ -281,19 +279,19 @@ paths:
                     type: string
                     example: Предложение с идентификатором 5 успешно удалено
 
-  /offers/{cityId}/premium:
+  /offers/{city}/premium:
     get:
       tags:
         - offers
       summary: Получить список всех премиальных предложений для города
       description: Получить список всех премиальных предложений для города
       parameters:
-        - name: cityId
+        - name: city
           in: path
-          description: Уникальный идентификатор города
+          description: Название города
           required: true
           schema:
-            type: number
+            type: string
             example: 1
 
       responses:
@@ -469,95 +467,6 @@ paths:
                 $ref: '#/components/schemas/authErrorMessage'
       security:
         - tokenAuth: []
-
-  /cities:
-    get:
-      tags:
-        - cities
-      summary: Получить список всех городов
-      description: Возвращает список всех городов
-
-      responses:
-        "200":
-          description: Возвращает список городов.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cities'
-
-    post:
-      tags:
-        - cities
-      summary: Создание нового города
-      description: Регистрирует новый город.
-
-      parameters:
-        - name: X-Token
-          in: header
-          description: Авторизационный токен пользователя
-          required: true
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
-
-      requestBody:
-        description: Информация для создания нового города.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/city'
-        required: true
-
-      responses:
-        "201":
-          description: Город успешно создано.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/city'
-
-        "401":
-          description: Ошибка валидации данных.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/validationErrorMessage'
-        "403":
-          description: Пользователь не авторизован.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authErrorMessage'
-
-  /cities/{cityId}:
-    get:
-      tags:
-        - cities
-      summary: Получить город
-      description: Возвращает объект города по идентификатору
-
-      parameters:
-        - name: cityId
-          in: path
-          description: Уникальный идентификатор города
-          required: true
-          schema:
-            type: number
-            example: 1
-
-      responses:
-        "200":
-          description: Возвращает объект города.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/city'
-        "404":
-          description: Если город не найден.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/notFoundErrorMessage'
 
 components:
   schemas:
@@ -806,27 +715,6 @@ components:
         rating:
           type: number
           example: 4
-
-    city:
-      type: object
-
-      properties:
-        name:
-          type: string
-          example: 'Paris'
-
-        location:
-          type: object
-          example: {
-            latitude: 58.0025,
-            longitude: 4.057496
-          }
-
-    cities:
-      type: array
-      items:
-        type: object
-        $ref: '#/components/schemas/city'
 
     authErrorMessage:
       type: object

@@ -28,7 +28,7 @@ Content-Type: application/json
 
 ## Отправить изображение
 
-POST http://127.0.0.1:5000/users/665367a4129d3e466a94cbd4/avatar HTTP/1.1
+POST http://127.0.0.1:5000/users/66614bb5cdc9ce4b64362c87/avatar HTTP/1.1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW

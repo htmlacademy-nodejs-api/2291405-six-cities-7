@@ -1,11 +1,9 @@
-import { OfferType } from '../../../helpers/index.js';
-import { CityRdo } from '../../city/index.js';
-import { CreateLocationDto } from '../../location/index.js';
+import { City, Location, OfferType } from '../../../types/index.js';
 
 export class RequestOfferDto {
   public title: string;
   public description: string;
-  public city: CityRdo;
+  public city: City;
   public previewImage: string;
   public images: string[];
   public isPremium: boolean;
@@ -16,5 +14,5 @@ export class RequestOfferDto {
   public price: number;
   public goods: string[];
   public hostId: string;
-  public location: CreateLocationDto;
+  public location: Location;
 }

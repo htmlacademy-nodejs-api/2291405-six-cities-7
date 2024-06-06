@@ -25,9 +25,25 @@ export class HostController extends BaseController {
     super(logger);
     this.logger.info('Register routes for UserController…');
 
-    this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create,middlewares: [new ValidateDtoMiddleware(CreateHostDto)] });
-    this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginHostDto)]});
-    this.addRoute({ path: '/:hostId/avatar', method: HttpMethod.Post, handler: this.updateAvatar,
+    this.addRoute({
+      path: '/register',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateHostDto)]
+    });
+    this.addRoute({
+      path: '/login',
+      method: HttpMethod.Post,
+      handler: this.login,
+      middlewares: [
+        new ValidateDtoMiddleware(LoginHostDto),
+        new DocumentExistsMiddleware(this.hostService, 'Host', 'hostId')
+      ]
+    });
+    this.addRoute({
+      path: '/:hostId/avatar',
+      method: HttpMethod.Post,
+      handler: this.updateAvatar,
       middlewares: [
         new ValidateObjectIdMiddleware('hostId'),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatarUrl'),

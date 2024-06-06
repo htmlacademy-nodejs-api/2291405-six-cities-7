@@ -19,7 +19,6 @@ export class RestApplication {
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.Config) private readonly config: Config<RestSchema>,
     @inject(Component.DatabaseClient) private readonly databaseClient: DatabaseClient,
-    @inject(Component.CityController) private readonly cityController: Controller,
     @inject(Component.HostController) private readonly hostController: Controller,
     @inject(Component.OfferController) private readonly offerController: Controller,
     @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
@@ -59,7 +58,6 @@ export class RestApplication {
   private _initControllers() {
     this.logger.info('Init controllers');
 
-    this.server.use('/cities', this.cityController.router);
     this.server.use('/users', this.hostController.router);
     this.server.use('/offers', this.offerController.router);
 

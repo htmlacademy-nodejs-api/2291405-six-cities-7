@@ -1,5 +1,5 @@
-import { Expose, Type } from 'class-transformer';
-import { CityRdo } from '../../city/index.js';
+import { Expose} from 'class-transformer';
+import { City } from '../../../types/index.js';
 
 export class OfferRdo {
   @Expose()
@@ -33,6 +33,5 @@ export class OfferRdo {
   public commentCount: number;
 
   @Expose()
-  @Type(() => CityRdo)
-  public city: CityRdo;
+  public city: City;
 }

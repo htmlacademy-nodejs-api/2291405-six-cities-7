@@ -5,7 +5,7 @@ import { Command } from './command.interface.js';
 import { MockServerData } from '../../shared/types/index.js';
 import { TSVOfferGenerator } from '../../shared/libs/offer-generator/index.js';
 import { TSVFileWriter } from '../../shared/libs/file-writer/index.js';
-import { Commands } from '../../shared/helpers/const.js';
+import { Commands } from '../types/command.enum.js';
 
 export class GenerateCommand implements Command {
   private initialData: MockServerData;

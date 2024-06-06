@@ -1,7 +1,7 @@
 import { Expose, Type } from 'class-transformer';
-import { CityRdo } from '../../city/index.js';
 import { HostRdo } from '../../host/index.js';
-import { LocationRdo } from '../../location/index.js';
+import { City, Location } from '../../../types/index.js';
+
 
 export class DetailOfferRdo {
   @Expose()
@@ -17,8 +17,7 @@ export class DetailOfferRdo {
   public dateOfPublication: string;
 
   @Expose()
-  @Type(() => CityRdo)
-  public city: CityRdo;
+  public city: City;
 
   @Expose()
   public previewImage: string;
@@ -55,8 +54,7 @@ export class DetailOfferRdo {
   public host: HostRdo;
 
   @Expose()
-  @Type(() => LocationRdo)
-  public location: LocationRdo;
+  public location: Location;
 
   @Expose()
   public commentCount: number;
