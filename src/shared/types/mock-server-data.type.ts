@@ -1,4 +1,4 @@
-import { Location, Host } from './index.js';
+import { Location, User } from './index.js';
 
 export type MockServerData = {
   titles: string[],
@@ -7,6 +7,6 @@ export type MockServerData = {
   images: string[],
   types: string[],
   goods: string[],
-  hosts: Host[],
+  users: User[],
   locations: Location[]
 };

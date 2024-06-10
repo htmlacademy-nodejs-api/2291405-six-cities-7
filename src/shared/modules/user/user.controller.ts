@@ -6,22 +6,22 @@ import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
-import { HostRdo } from './rdo/host.rdo.js';
-import { LoginHostRequest } from './login-host-request.type.js';
-import { HostService } from './host-service.interface.js';
-import { CreateHostRequest } from './create-host-request.type.js';
+import { UserRdo } from './rdo/user.rdo.js';
+import { LoginUserRequest } from './login-user-request.type.js';
+import { UserService } from './user-service.interface.js';
+import { CreateUserRequest } from './create-user-request.type.js';
 import { BaseController, HttpMethod, HttpError, ValidateDtoMiddleware, ValidateObjectIdMiddleware, UploadFileMiddleware, DocumentExistsMiddleware } from '../../libs/rest/index.js';
-import { CreateHostDto } from './dto/create-host.dto.js';
-import { LoginHostDto } from './dto/login-host.dto.js';
+import { CreateUserDto } from './dto/create-user.dto.js';
+import { LoginUserDto } from './dto/login-user.dto.js';
 import { AuthService } from '../auth/index.js';
-import { LoggedHostRdo } from './rdo/logged-host.rdo.js';
+import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
 
 
 @injectable()
-export class HostController extends BaseController {
+export class UserController extends BaseController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
-    @inject(Component.HostService) private readonly hostService: HostService,
+    @inject(Component.UserService) private readonly userService: UserService,
     @inject(Component.Config) private readonly configService: Config<RestSchema>,
     @inject(Component.AuthService) private readonly authService: AuthService
   ) {
@@ -32,15 +32,14 @@ export class HostController extends BaseController {
       path: '/register',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateHostDto)]
+      middlewares: [new ValidateDtoMiddleware(CreateUserDto)]
     });
     this.addRoute({
       path: '/login',
       method: HttpMethod.Post,
       handler: this.login,
       middlewares: [
-        new ValidateDtoMiddleware(LoginHostDto),
-        new DocumentExistsMiddleware(this.hostService, 'Host', 'hostId')
+        new ValidateDtoMiddleware(LoginUserDto)
       ]
     });
     this.addRoute({
@@ -50,21 +49,21 @@ export class HostController extends BaseController {
       middlewares: [
         new ValidateObjectIdMiddleware('hostId'),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatarUrl'),
-        new DocumentExistsMiddleware(this.hostService, 'Host', 'hostId')
+        new DocumentExistsMiddleware(this.userService, 'User', 'userId')
       ]
     });
     this.addRoute({
-      path: '/login',
+      path: '/profile',
       method: HttpMethod.Get,
-      handler: this.checkAuthenticate,
+      handler: this.profile,
     });
   }
 
   public async create(
-    { body }: CreateHostRequest,
+    { body }: CreateUserRequest,
     res: Response,
   ): Promise<void> {
-    const existsUser = await this.hostService.findByEmail(body.email);
+    const existsUser = await this.userService.findByEmail(body.email);
 
     if (existsUser) {
       throw new HttpError(
@@ -74,17 +73,17 @@ export class HostController extends BaseController {
       );
     }
 
-    const result = await this.hostService.create(body, this.configService.get('SALT'));
-    this.created(res, fillDTO(HostRdo, result));
+    const result = await this.userService.create(body, this.configService.get('SALT'));
+    this.created(res, fillDTO(UserRdo, result));
   }
 
   public async login(
-    { body }: LoginHostRequest,
+    { body }: LoginUserRequest,
     res: Response,
   ): Promise<void> {
     const user = await this.authService.verify(body);
     const token = await this.authService.authenticate(user);
-    const responseData = fillDTO(LoggedHostRdo, {
+    const responseData = fillDTO(LoggedUserRdo, {
       email: user.email,
       token,
     });
@@ -93,14 +92,14 @@ export class HostController extends BaseController {
 
   public async updateAvatar({file, params}: Request, res: Response): Promise<void> {
     const { hostId } = params;
-    const updatedHost = await this.hostService.updateById(hostId, { avatarUrl: file?.path });
-    this.ok(res, fillDTO(HostRdo, updatedHost));
+    const updatedHost = await this.userService.updateById(hostId, { avatarUrl: file?.path });
+    this.ok(res, fillDTO(UserRdo, updatedHost));
   }
 
-  public async checkAuthenticate({ tokenPayload: { email }}: Request, res: Response) {
-    const foundedUser = await this.hostService.findByEmail(email);
+  public async profile({ tokenPayload: { email }}: Request, res: Response) {
+    const foundUser = await this.userService.findByEmail(email);
 
-    if (! foundedUser) {
+    if (! foundUser) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
         'Unauthorized',
@@ -108,6 +107,6 @@ export class HostController extends BaseController {
       );
     }
 
-    this.ok(res, fillDTO(LoggedHostRdo, foundedUser));
+    this.ok(res, fillDTO(LoggedUserRdo, foundUser));
   }
 }

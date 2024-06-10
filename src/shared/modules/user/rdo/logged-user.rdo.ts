@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class LoggedHostRdo {
+export class LoggedUserRdo {
   @Expose()
   public token: string;
 

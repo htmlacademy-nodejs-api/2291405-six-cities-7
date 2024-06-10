@@ -1,4 +1,4 @@
-export const HostMessages = {
+export const UserMessages = {
   email: {
     invalidFormat: 'email must be a valid address'
   },

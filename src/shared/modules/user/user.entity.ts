@@ -1,21 +1,21 @@
 import { defaultClasses, getModelForClass, prop, modelOptions } from '@typegoose/typegoose';
 
-import { Host } from '../../types/index.js';
+import { User } from '../../types/index.js';
 import { createSHA256 } from '../../helpers/index.js';
 
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export interface HostEntity extends defaultClasses.Base {}
+export interface UserEntity extends defaultClasses.Base {}
 
 @modelOptions({
   schemaOptions: {
-    collection: 'hosts',
+    collection: 'users',
     timestamps: true,
   }
 })
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export class HostEntity extends defaultClasses.TimeStamps implements Host {
+export class UserEntity extends defaultClasses.TimeStamps implements User {
   @prop({ required: true, default: '' })
   public name: string;
 
@@ -31,13 +31,13 @@ export class HostEntity extends defaultClasses.TimeStamps implements Host {
   @prop({ required: true })
   private password?: string;
 
-  constructor(hostData: Host) {
+  constructor(userData: User) {
     super();
 
-    this.name = hostData.name;
-    this.email = hostData.email;
-    this.avatarUrl = hostData.avatarUrl;
-    this.isPro = hostData.isPro;
+    this.name = userData.name;
+    this.email = userData.email;
+    this.avatarUrl = userData.avatarUrl;
+    this.isPro = userData.isPro;
   }
 
   public setPassword(password: string, salt: string) {
@@ -54,4 +54,4 @@ export class HostEntity extends defaultClasses.TimeStamps implements Host {
   }
 }
 
-export const HostModel = getModelForClass(HostEntity);
+export const UserModel = getModelForClass(UserEntity);

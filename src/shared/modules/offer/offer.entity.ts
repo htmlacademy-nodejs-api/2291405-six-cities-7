@@ -1,7 +1,7 @@
 import { Ref, Severity, defaultClasses, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
-import { Location, Host, City, OfferType } from '../../types/index.js';
-import { HostEntity } from '../host/index.js';
+import { Location, User, City, OfferType } from '../../types/index.js';
+import { UserEntity } from '../user/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface OfferEntity extends defaultClasses.Base {}
@@ -65,10 +65,10 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   public goods: string[];
 
   @prop({
-    ref: HostEntity,
+    ref: UserEntity,
     required: true
   })
-  public hostId: Ref<Host>;
+  public hostId: Ref<User>;
 
   @prop({ required: true })
   public location: Location;

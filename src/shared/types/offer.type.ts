@@ -1,4 +1,4 @@
-import { Host } from './host.type.js';
+import { User } from './user.type.js';
 import { City } from './city.type.js';
 import { Location } from './location.type.js';
 import { OfferType } from './offer-type.enum.js';
@@ -17,6 +17,6 @@ export type Offer = {
   maxAdults: number;
   price: number;
   goods: string[];
-  host: Host;
+  user: User;
   location: Location;
 }
