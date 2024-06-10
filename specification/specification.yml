@@ -1,4 +1,4 @@
-openapi: '3.0.2'
+openapi: '3.1.0'
 info:
   title: API сервер для проекта «Шесть городов».
   description: |-
@@ -140,14 +140,8 @@ paths:
       summary: Создание нового предложения
       description: Регистрирует новое предложение.
 
-      parameters:
-        - name: X-Token
-          in: header
-          description: Авторизационный токен пользователя
-          required: true
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+      security:
+        - bearer: []
 
       requestBody:
         description: Информация для создания нового предложения.
@@ -214,14 +208,17 @@ paths:
       summary: Редакитрование предложения
       description: Ресурс для редактирования существующего предложения
 
+      security:
+        - bearer: []
+
       parameters:
-        - name: X-Token
-          in: header
-          description: Авторизационный токен пользователя
+        - name: offerId
+          in: path
+          description: Уникальный идентификатор предложения
           required: true
           schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+            type: number
+            example: 1
 
       requestBody:
         description: Обновленная информация о предложении.
@@ -258,14 +255,17 @@ paths:
       summary: Удаляет предложение
       description: Удаление предложения по идентификатору
 
+      security:
+        - bearer: []
+
       parameters:
-        - name: X-Token
-          in: header
-          description: Авторизационный токен пользователя
+        - name: offerId
+          in: path
+          description: Уникальный идентификатор предложения
           required: true
           schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+            type: number
+            example: 1
 
       responses:
         "204":
@@ -315,14 +315,8 @@ paths:
       summary: Получить список избранных предложений
       description: Получить список избранных предложений пользователя
 
-      parameters:
-        - name: X-Token
-          in: header
-          description: Авторизационный токен пользователя
-          required: true
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+      security:
+        - bearer: []
 
       responses:
         "200":
@@ -345,6 +339,9 @@ paths:
       summary: Добавляет или удаляет предложение из избранного
       description: Добавляет или удаляет предложение из избранного
 
+      security:
+        - bearer: []
+
       parameters:
         - name: offerId
           in: path
@@ -353,13 +350,6 @@ paths:
           schema:
             type: number
             example: 1
-        - name: X-Token
-          in: header
-          description: Авторизационный токен пользователя
-          required: true
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
 
       responses:
         "200":
@@ -386,6 +376,10 @@ paths:
       summary: Получить список комментариев
       description: Возвращает список комментариев для предложения с идентификатором `offerId`.
       operationId: getComment
+
+      security:
+        - bearer: []
+
       parameters:
         - name: offerId
           in: path
@@ -394,13 +388,8 @@ paths:
           schema:
             type: number
             example: 1
-        - name: X-Token
-          in: header
-          description: Авторизационный токен пользователя
-          required: false
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+
       responses:
         '200':
           description: Массив комментариев
@@ -422,14 +411,11 @@ paths:
       summary: Добавить новый комментарий
       description: Добавляет новый комментарий для предложения с идентификатором `offerId`.
       operationId: postComment
+
+      security:
+        - bearer: []
+
       parameters:
-        - name: X-Token
-          in: header
-          description: Авторизационный токен пользователя
-          required: true
-          schema:
-            type: string
-            example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
         - name: offerId
           in: path
           description: Уникальный идентификатор предложения
@@ -465,10 +451,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/authErrorMessage'
-      security:
-        - tokenAuth: []
 
 components:
+  securitySchemes:
+    bearer:
+      type: http
+      name: bearer
+      bearerFormat: JWT
+
   schemas:
 
     user:
@@ -736,9 +726,3 @@ components:
         error:
           type: string
           example: Предложение не найдено.
-
-  securitySchemes:
-    tokenAuth:
-      type: apiKey
-      name: X-Token
-      in: header

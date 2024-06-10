@@ -3,13 +3,15 @@ export const Component = {
   Logger: 'Logger',
   Config: 'Config',
   DatabaseClient: 'DatabaseClient',
-  HostService: 'HostService',
-  HostModel: 'HostModel',
+  UserService: 'UserService',
+  UserModel: 'UserModel',
   OfferService: 'OfferService',
   OfferModel: 'OfferModel',
   CommentService: Symbol.for('CommentService'),
   CommentModel: Symbol.for('CommentModel'),
-  HostController: Symbol.for('HostController'),
+  UserController: Symbol.for('UserController'),
   OfferController: Symbol.for('OfferController'),
-  ExceptionFilter: Symbol.for('ExceptionFilter')
-} as const;
+  ExceptionFilter: Symbol.for('ExceptionFilter'),
+  AuthService: Symbol.for('AuthService'),
+  AuthExceptionFilter: Symbol.for('AuthExceptionFilter')
+};

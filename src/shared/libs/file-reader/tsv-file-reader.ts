@@ -2,7 +2,7 @@ import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
 
 import { FileReader } from './file-reader.interface.js';
-import { Offer, Host, Location, City, CityNames, OfferType} from '../../types/index.js';
+import { Offer, User, Location, City, CityNames, OfferType} from '../../types/index.js';
 import { convertStringToBoolean} from '../../helpers/index.js';
 import { CITIES } from '../../helpers/const.js';
 
@@ -52,7 +52,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       maxAdults: Number(maxAdults),
       price: Number(price),
       goods: goods.split(';'),
-      host: this.parseHost(name, email, avatarUrl, isPro),
+      user: this.parseUser(name, email, avatarUrl, isPro),
       location: this.parseLocation(latitude, longitude)
     };
   }
@@ -68,7 +68,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     return { latitude: Number(latitude), longitude: Number(longitude) };
   }
 
-  private parseHost(name: string, email: string, avatarUrl:string, isPro: string): Host {
+  private parseUser(name: string, email: string, avatarUrl:string, isPro: string): User {
     return {
       name,
       email,

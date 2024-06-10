@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { Location, Host, OfferType } from '../../types/index.js';
+import { Location, User, OfferType } from '../../types/index.js';
 
 import { OfferGenerator } from './offer-generator.interface.js';
 import { MockServerData } from '../../types/index.js';
@@ -43,7 +43,7 @@ export class TSVOfferGenerator implements OfferGenerator {
     const price = generateRandomValue(MIN_PRICE, MAX_PRICE).toString();
 
     const goods = getRandomItems<string>(GOODS).join(';');
-    const host = ParseObject(getRandomItem<Host>(this.mockData.hosts));
+    const host = ParseObject(getRandomItem<User>(this.mockData.users));
     const location = ParseObject(getRandomItem<Location>(this.mockData.locations));
 
     return [

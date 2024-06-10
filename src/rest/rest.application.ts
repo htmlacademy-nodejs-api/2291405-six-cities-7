@@ -10,6 +10,8 @@ import { Component } from '../shared/types/index.js';
 import { DatabaseClient } from '../shared/libs/database-client/index.js';
 import { getMongoURI } from '../shared/helpers/index.js';
 import { Controller, ExceptionFilter } from '../shared/libs/rest/index.js';
+import { ParseTokenMiddleware } from '../shared/libs/rest/middleware/parse-token.middleware.js';
+
 
 @injectable()
 export class RestApplication {
@@ -19,9 +21,10 @@ export class RestApplication {
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.Config) private readonly config: Config<RestSchema>,
     @inject(Component.DatabaseClient) private readonly databaseClient: DatabaseClient,
-    @inject(Component.HostController) private readonly hostController: Controller,
+    @inject(Component.UserController) private readonly userController: Controller,
     @inject(Component.OfferController) private readonly offerController: Controller,
     @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
+    @inject(Component.AuthExceptionFilter) private readonly authExceptionFilter: ExceptionFilter
   ) {
     this.server = express();
   }
@@ -58,7 +61,7 @@ export class RestApplication {
   private _initControllers() {
     this.logger.info('Init controllers');
 
-    this.server.use('/users', this.hostController.router);
+    this.server.use('/users', this.userController.router);
     this.server.use('/offers', this.offerController.router);
 
     this.logger.info('Controller initialization completed');
@@ -66,16 +69,20 @@ export class RestApplication {
 
   private _initMiddleware() {
     this.logger.info('Init app-level middleware');
+    const authenticateMiddleware = new ParseTokenMiddleware(this.config.get('JWT_SECRET'));
+
     this.server.use(express.json());
     this.server.use(
       '/upload',
       express.static(this.config.get('UPLOAD_DIRECTORY'))
     );
+    this.server.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
     this.logger.info('App-level middleware initialization completed');
   }
 
   private _initExceptionFilters() {
     this.logger.info('Init exception filters');
+    this.server.use(this.authExceptionFilter.catch.bind(this.authExceptionFilter));
     this.server.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
     this.logger.info('Exception filters initialization compleated');
   }

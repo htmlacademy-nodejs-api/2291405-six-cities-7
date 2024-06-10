@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class HostRdo {
+export class UserRdo {
   @Expose()
   public email: string ;
 

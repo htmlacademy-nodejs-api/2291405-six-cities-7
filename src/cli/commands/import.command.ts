@@ -2,7 +2,7 @@ import { Command } from './command.interface.js';
 import { TSVFileReader } from '../../shared/libs/file-reader/index.js';
 import { getErrorMessage, getMongoURI } from '../../shared/helpers/index.js';
 import { Offer } from '../../shared/types/offer.type.js';
-import { DefaultHostService, HostModel, HostService } from '../../shared/modules/host/index.js';
+import { DefaultUserService, UserModel, UserService } from '../../shared/modules/user/index.js';
 import { DefaultOfferService, OfferModel, OfferService } from '../../shared/modules/offer/index.js';
 import { DatabaseClient, MongoDatabaseClient } from '../../shared/libs/database-client/index.js';
 import { DEFAULT_DB_PORT, DEFAULT_USER_PASSWORD } from './command.constant.js';
@@ -10,7 +10,7 @@ import { Logger, PinoLogger } from '../../shared/libs/logger/index.js';
 
 
 export class ImportCommand implements Command {
-  private hostService: HostService;
+  private userService: UserService;
   private offerService: OfferService;
   private databaseClient: DatabaseClient;
   private logger: Logger;
@@ -22,7 +22,7 @@ export class ImportCommand implements Command {
 
     this.logger = new PinoLogger();
     this.offerService = new DefaultOfferService(this.logger, OfferModel);
-    this.hostService = new DefaultHostService(this.logger, HostModel);
+    this.userService = new DefaultUserService(this.logger, UserModel);
     this.databaseClient = new MongoDatabaseClient(this.logger);
   }
 
@@ -36,7 +36,7 @@ export class ImportCommand implements Command {
   }
 
   private async saveOffer(offer: Offer) {
-    const host = await this.hostService.findOrCreate({...offer.host, password: DEFAULT_USER_PASSWORD}, this.salt);
+    const host = await this.userService.findOrCreate({...offer.user, password: DEFAULT_USER_PASSWORD}, this.salt);
 
     await this.offerService.create({
       title: offer.title,

@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { HostRdo } from '../../host/index.js';
+import { UserRdo } from '../../user/index.js';
 import { City, Location } from '../../../types/index.js';
 
 
@@ -50,8 +50,8 @@ export class DetailOfferRdo {
   public goods: string[];
 
   @Expose()
-  @Type(() => HostRdo)
-  public host: HostRdo;
+  @Type(() => UserRdo)
+  public host: UserRdo;
 
   @Expose()
   public location: Location;
