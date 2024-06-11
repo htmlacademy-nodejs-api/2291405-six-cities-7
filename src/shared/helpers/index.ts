@@ -7,7 +7,10 @@ export {
   ParseObject,
   getMongoURI,
   getErrorMessage,
-  fillDTO
+  fillDTO,
+  reduceValidationErrors,
+  createErrorObject,
+  getFullServerPath
 } from './common.js';
 
 export {
