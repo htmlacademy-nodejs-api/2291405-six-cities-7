@@ -25,3 +25,5 @@ export {
 export {
   UserService
 } from './user-service.interface.js';
+
+export { DEFAULT_AVATAR_FILE_NAME } from './user.constant.js';

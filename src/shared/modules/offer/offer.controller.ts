@@ -11,7 +11,14 @@ import { DetailOfferRdo } from './rdo/detail-offer.rdo.js';
 import { CommentService } from '../comment/index.js';
 import dayjs from 'dayjs';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
-import { BaseController, HttpMethod, ValidateObjectIdMiddleware, ValidateDtoMiddleware, DocumentExistsMiddleware, PrivateRouteMiddleware, RequestBody } from '../../libs/rest/index.js';
+import {
+  BaseController,
+  HttpMethod,
+  ValidateObjectIdMiddleware,
+  ValidateDtoMiddleware,
+  DocumentExistsMiddleware,
+  PrivateRouteMiddleware
+} from '../../libs/rest/index.js';
 import { ParamOfferId } from './type/param-offerid.type.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { ValidateCityMiddleware } from '../../libs/rest/middleware/validate-city.middleware.js';

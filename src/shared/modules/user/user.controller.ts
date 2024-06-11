@@ -15,6 +15,7 @@ import { CreateUserDto } from './dto/create-user.dto.js';
 import { LoginUserDto } from './dto/login-user.dto.js';
 import { AuthService } from '../auth/index.js';
 import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
+import { UploadUserAvatarRdo } from './rdo/upload-user-avatar.rdo.js';
 
 
 @injectable()
@@ -45,7 +46,7 @@ export class UserController extends BaseController {
     this.addRoute({
       path: '/:hostId/avatar',
       method: HttpMethod.Post,
-      handler: this.updateAvatar,
+      handler: this.uploadAvatar,
       middlewares: [
         new ValidateObjectIdMiddleware('hostId'),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatarUrl'),
@@ -83,17 +84,15 @@ export class UserController extends BaseController {
   ): Promise<void> {
     const user = await this.authService.verify(body);
     const token = await this.authService.authenticate(user);
-    const responseData = fillDTO(LoggedUserRdo, {
-      email: user.email,
-      token,
-    });
-    this.ok(res, responseData);
+    const responseData = fillDTO(LoggedUserRdo, user);
+    this.ok(res, Object.assign(responseData, { token }));
   }
 
-  public async updateAvatar({file, params}: Request, res: Response): Promise<void> {
-    const { hostId } = params;
-    const updatedHost = await this.userService.updateById(hostId, { avatarUrl: file?.path });
-    this.ok(res, fillDTO(UserRdo, updatedHost));
+  public async uploadAvatar({ params, file }: Request, res: Response) {
+    const { userId } = params;
+    const uploadFile = { avatarUrl: file?.filename };
+    await this.userService.updateById(userId, uploadFile);
+    this.created(res, fillDTO(UploadUserAvatarRdo, { filepath: uploadFile.avatarUrl }));
   }
 
   public async profile({ tokenPayload: { email }}: Request, res: Response) {
