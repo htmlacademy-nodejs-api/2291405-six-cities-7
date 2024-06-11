@@ -13,11 +13,13 @@ import {
   ValidateNested,
   IsString,
   IsIn,
-  Matches
+  Matches,
+  IsLatitude,
+  IsLongitude
 } from 'class-validator';
 import { GOODS } from '../../../helpers/index.js';
 import { OfferValidationMessage } from './offer.messages.js';
-import { City, CityNames, Location, OfferType } from '../../../types/index.js';
+import { City, OfferType } from '../../../types/index.js';
 
 export class CreateOfferDto {
   @IsString({ message: OfferValidationMessage.title.invalidFormat })
@@ -33,7 +35,6 @@ export class CreateOfferDto {
   @IsDateString({}, { message: OfferValidationMessage.dateOfPublication.invalidFormat })
   public dateOfPublication: string;
 
-  @IsEnum(CityNames, { message: OfferValidationMessage.city.invalid })
   @ValidateNested({ message: OfferValidationMessage.city.invalid })
   public city: City;
 
@@ -77,8 +78,11 @@ export class CreateOfferDto {
   @IsIn(GOODS, {each: true, message: OfferValidationMessage.goods.invalidValue })
   public goods: string[];
 
-  public hostId: string;
+  public userId: string;
 
-  @ValidateNested({ message: OfferValidationMessage.location.invalid })
-  public location: Location;
+  @IsLatitude()
+  public latitude: number;
+
+  @IsLongitude()
+  public longitude: number;
 }

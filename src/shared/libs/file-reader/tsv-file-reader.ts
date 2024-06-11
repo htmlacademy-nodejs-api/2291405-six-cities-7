@@ -2,9 +2,11 @@ import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
 
 import { FileReader } from './file-reader.interface.js';
-import { Offer, User, Location, City, CityNames, OfferType} from '../../types/index.js';
+import { User, CityNames, OfferType, UserType} from '../../types/index.js';
 import { convertStringToBoolean} from '../../helpers/index.js';
 import { CITIES } from '../../helpers/const.js';
+import { Offer } from '../../../cli/types/offer.type.js';
+import { City } from '../../../cli/types/city.type.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
   private CHUNK_SIZE = 16384;
@@ -53,7 +55,8 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       price: Number(price),
       goods: goods.split(';'),
       user: this.parseUser(name, email, avatarUrl, isPro),
-      location: this.parseLocation(latitude, longitude)
+      latitude: Number(latitude),
+      longitude: Number(longitude),
     };
   }
 
@@ -64,16 +67,12 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     };
   }
 
-  private parseLocation(latitude: string, longitude: string): Location {
-    return { latitude: Number(latitude), longitude: Number(longitude) };
-  }
-
-  private parseUser(name: string, email: string, avatarUrl:string, isPro: string): User {
+  private parseUser(name: string, email: string, avatarUrl:string, type: string): User {
     return {
       name,
       email,
       avatarUrl,
-      isPro: convertStringToBoolean(isPro)
+      type: type as UserType
     };
   }
 

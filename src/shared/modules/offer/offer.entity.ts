@@ -1,6 +1,6 @@
 import { Ref, Severity, defaultClasses, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
-import { Location, User, City, OfferType } from '../../types/index.js';
+import { User, City, OfferType } from '../../types/index.js';
 import { UserEntity } from '../user/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -68,10 +68,13 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     ref: UserEntity,
     required: true
   })
-  public hostId: Ref<User>;
+  public userId: Ref<User>;
 
   @prop({ required: true })
-  public location: Location;
+  public latitude: number;
+
+  @prop({ required: true })
+  public longitude: number;
 }
 
 export const OfferModel = getModelForClass(OfferEntity);

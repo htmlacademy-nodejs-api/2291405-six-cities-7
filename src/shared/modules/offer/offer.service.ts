@@ -63,14 +63,14 @@ export class DefaultOfferService implements OfferService {
       ...addFieldsToOffers,
       {
         $lookup: {
-          from: 'hosts',
-          localField: 'hostId',
+          from: 'users',
+          localField: 'userId',
           foreignField: '_id',
-          as: 'host'
+          as: 'user'
         }
       },
       {
-        $unwind: '$host'
+        $unwind: '$user'
       },
       {
         $sort: { createAt: SortType.Desc }
@@ -92,12 +92,14 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async findAll(count: number = this.DEFAULT_OFFER_LIMIT): Promise<DocumentType<OfferEntity>[]> {
-    return this.offerModel.aggregate([
+    const offers = await this.offerModel.aggregate([
       ...addFieldsToOffers,
       {
         $limit: count
       }
     ]).exec();
+
+    return offers;
   }
 
   public async exists(documentId: string): Promise<boolean> {

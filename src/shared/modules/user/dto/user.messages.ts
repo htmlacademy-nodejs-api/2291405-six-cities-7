@@ -9,8 +9,8 @@ export const UserMessages = {
     invalidFormat: 'name is required',
     lengthField: 'min length is 1, max is 15',
   },
-  isPro: {
-    invalidFormat: 'isPro must be an boolean',
+  type: {
+    invalid: 'type must be an pro | regular',
   },
   password: {
     invalidFormat: 'password is required',

@@ -32,26 +32,18 @@ export class GenerateCommand implements Command {
   }
 
   public async execute(...parameters: string[]): Promise<void> {
-    try {
-      if (!parameters.length) {
-        throw new Error('Not enough parameters error');
-      }
 
-      const [count, filepath, url] = parameters;
-      const offerCount = Number(count);
-
-      await this.load(url);
-      await this.write(filepath, offerCount);
-      console.info(chalk.green(`File ${filepath} was created!`));
-
-    } catch (error) {
-      console.error(chalk.red('Can\'t generate data'));
-
-      if (!(error instanceof Error)) {
-        throw error;
-      }
-
-      console.error(chalk.red(error.message));
+    if (!parameters.length) {
+      throw new Error('Not enough parameters error');
     }
+
+    const [count, filepath, url] = parameters;
+    const offerCount = Number(count);
+
+    await this.load(url);
+    await this.write(filepath, offerCount);
+    console.info(chalk.green(`File ${filepath} was created!`));
+
+
   }
 }

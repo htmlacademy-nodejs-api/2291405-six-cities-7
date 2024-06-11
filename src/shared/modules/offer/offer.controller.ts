@@ -128,7 +128,7 @@ export class OfferController extends BaseController {
     const createdOffer = await this.offerService.create({
       ...body,
       dateOfPublication: dateOfPublication,
-      hostId: tokenPayload.id
+      userId: tokenPayload.id
     });
 
     this.created(res, fillDTO(OfferRdo, createdOffer));

@@ -1,6 +1,7 @@
-import { IsBoolean, IsEmail, IsString, Length } from 'class-validator';
+import { IsEmail, IsEnum, IsString, Length } from 'class-validator';
 
 import { UserMessages } from './user.messages.js';
+import { UserType } from '../../../types/index.js';
 
 export class CreateUserDto {
   @IsString({ message: UserMessages.name.invalidFormat })
@@ -14,6 +15,6 @@ export class CreateUserDto {
   @Length(6, 12, { message: UserMessages.password.lengthField })
   public password: string;
 
-  @IsBoolean({ message: UserMessages.isPro.invalidFormat })
-  public isPro: boolean;
+  @IsEnum(UserType, { message: UserMessages.type.invalid })
+  public type: UserType;
 }

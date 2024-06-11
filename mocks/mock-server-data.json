@@ -50,30 +50,30 @@
 			"Fridge",
 			"Air conditioning"
     ],
-    "hosts": [
+    "users": [
       {
         "name": "Angelina",
         "email": "Angelina@mail.ru",
         "avatarUrl": "img/avatar-angelina.jpg",
-        "isPro": true
+        "type": "pro"
       },
       {
         "name": "Elena",
         "email": "Elena@mail.com",
         "avatarUrl": "img/avatar-elena.jpg",
-        "isPro": false
+        "type": "pro"
       },
       {
         "name": "Mark",
         "email": "Mark@gmail.com",
         "avatarUrl": "img/avatar-mark.jpg",
-        "isPro": true
+        "type": "regular"
       },
       {
         "name": "bot",
         "email": "bot@outlook.com",
         "avatarUrl": "img/avatar-bot.jpg",
-        "isPro": true
+        "type": "regular"
       }
     ],
     "locations": [

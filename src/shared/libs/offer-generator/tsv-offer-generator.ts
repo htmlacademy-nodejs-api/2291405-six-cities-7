@@ -43,14 +43,14 @@ export class TSVOfferGenerator implements OfferGenerator {
     const price = generateRandomValue(MIN_PRICE, MAX_PRICE).toString();
 
     const goods = getRandomItems<string>(GOODS).join(';');
-    const host = ParseObject(getRandomItem<User>(this.mockData.users));
+    const user = ParseObject(getRandomItem<User>(this.mockData.users));
     const location = ParseObject(getRandomItem<Location>(this.mockData.locations));
 
     return [
       title, description, dateOfPublication,
       city, previewImage, images, isPremium,
       isFavorite, type, bedrooms,
-      maxAdults, price, goods, host,
+      maxAdults, price, goods, user,
       location
     ].join('\t');
   }
