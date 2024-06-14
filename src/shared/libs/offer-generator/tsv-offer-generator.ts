@@ -35,7 +35,6 @@ export class TSVOfferGenerator implements OfferGenerator {
     const images = getRandomItems<string>(this.mockData.images).join(';');
 
     const isPremium = getRandomItem([true, false]);
-    const isFavorite = getRandomItem([true, false]);
 
     const type = getRandomItem(Object.values(OfferType));
     const bedrooms = generateRandomValue(MIN_ROOMS, MAX_ROOMS).toString();
@@ -49,7 +48,7 @@ export class TSVOfferGenerator implements OfferGenerator {
     return [
       title, description, dateOfPublication,
       city, previewImage, images, isPremium,
-      isFavorite, type, bedrooms,
+      type, bedrooms,
       maxAdults, price, goods, user,
       location
     ].join('\t');

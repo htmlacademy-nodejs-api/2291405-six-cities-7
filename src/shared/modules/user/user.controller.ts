@@ -44,19 +44,24 @@ export class UserController extends BaseController {
       ]
     });
     this.addRoute({
-      path: '/:hostId/avatar',
+      path: '/avatar/:userId',
       method: HttpMethod.Post,
       handler: this.uploadAvatar,
       middlewares: [
-        new ValidateObjectIdMiddleware('hostId'),
+        new ValidateObjectIdMiddleware('userId'),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatarUrl'),
         new DocumentExistsMiddleware(this.userService, 'User', 'userId')
       ]
     });
     this.addRoute({
-      path: '/profile',
+      path: '/login',
       method: HttpMethod.Get,
-      handler: this.profile,
+      handler: this.checkAuthenticate
+    });
+    this.addRoute({
+      path: '/logout',
+      method: HttpMethod.Delete,
+      handler: this.logout
     });
   }
 
@@ -88,6 +93,13 @@ export class UserController extends BaseController {
     this.ok(res, Object.assign(responseData, { token }));
   }
 
+  public async logout(
+    _req: Request,
+    res: Response,
+  ): Promise<void> {
+    this.noContent(res, { message: 'Call logout'});
+  }
+
   public async uploadAvatar({ params, file }: Request, res: Response) {
     const { userId } = params;
     const uploadFile = { avatarUrl: file?.filename };
@@ -95,7 +107,7 @@ export class UserController extends BaseController {
     this.created(res, fillDTO(UploadUserAvatarRdo, { filepath: uploadFile.avatarUrl }));
   }
 
-  public async profile({ tokenPayload: { email }}: Request, res: Response) {
+  public async checkAuthenticate({ tokenPayload: { email }}: Request, res: Response) {
     const foundUser = await this.userService.findByEmail(email);
 
     if (! foundUser) {

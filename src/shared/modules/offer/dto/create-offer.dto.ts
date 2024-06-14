@@ -1,7 +1,6 @@
 import {
   MinLength,
   MaxLength,
-  IsDateString,
   IsEnum,
   IsInt,
   Max,
@@ -13,13 +12,12 @@ import {
   ValidateNested,
   IsString,
   IsIn,
-  Matches,
-  IsLatitude,
-  IsLongitude
+  Matches
 } from 'class-validator';
 import { GOODS } from '../../../helpers/index.js';
 import { OfferValidationMessage } from './offer.messages.js';
 import { City, OfferType } from '../../../types/index.js';
+import { Location } from '../../../../cli/index.js';
 
 export class CreateOfferDto {
   @IsString({ message: OfferValidationMessage.title.invalidFormat })
@@ -32,7 +30,6 @@ export class CreateOfferDto {
   @MaxLength(1024, { message: OfferValidationMessage.description.maxLength })
   public description: string;
 
-  @IsDateString({}, { message: OfferValidationMessage.dateOfPublication.invalidFormat })
   public dateOfPublication: string;
 
   @ValidateNested({ message: OfferValidationMessage.city.invalid })
@@ -51,9 +48,6 @@ export class CreateOfferDto {
 
   @IsBoolean({ message: OfferValidationMessage.isPremium.invalidFormat })
   public isPremium: boolean;
-
-  @IsBoolean({ message: OfferValidationMessage.isFavorite.invalidFormat })
-  public isFavorite: boolean;
 
   @IsEnum(OfferType, { message: OfferValidationMessage.type.invalid })
   public type: OfferType;
@@ -80,9 +74,6 @@ export class CreateOfferDto {
 
   public userId: string;
 
-  @IsLatitude()
-  public latitude: number;
-
-  @IsLongitude()
-  public longitude: number;
+  @ValidateNested({ message: OfferValidationMessage.location.invalid })
+  public location: Location;
 }

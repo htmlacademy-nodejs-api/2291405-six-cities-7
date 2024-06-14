@@ -77,6 +77,7 @@ const Property = (): JSX.Element | null => {
     city,
     location,
   } = offer;
+
   const isAuthor = host.email === user;
   const isPro = host.type === UserType.Pro;
 

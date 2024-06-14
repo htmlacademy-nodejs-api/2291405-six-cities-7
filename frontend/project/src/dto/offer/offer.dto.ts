@@ -1,4 +1,4 @@
-import { City, Type, User } from '../../types/types';
+import { City, Type, User, Location } from '../../types/types';
 
 
 export class OfferDto {
@@ -34,7 +34,5 @@ export class OfferDto {
 
   public user!: User;
 
-  public latitude!: number;
-
-  public longitude!: number;
+  public location!: Location;
 }

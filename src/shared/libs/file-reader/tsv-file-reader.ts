@@ -6,7 +6,7 @@ import { User, CityNames, OfferType, UserType} from '../../types/index.js';
 import { convertStringToBoolean} from '../../helpers/index.js';
 import { CITIES } from '../../helpers/const.js';
 import { Offer } from '../../../cli/types/offer.type.js';
-import { City } from '../../../cli/types/city.type.js';
+import { Location, City } from '../../../cli/index.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
   private CHUNK_SIZE = 16384;
@@ -26,7 +26,6 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       previewImage,
       images,
       isPremium,
-      isFavorite,
       type,
       bedrooms,
       maxAdults,
@@ -48,16 +47,18 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       previewImage,
       images: images.split(';'),
       isPremium: convertStringToBoolean(isPremium),
-      isFavorite: convertStringToBoolean(isFavorite),
       type: type as OfferType,
       bedrooms: Number(bedrooms),
       maxAdults: Number(maxAdults),
       price: Number(price),
       goods: goods.split(';'),
       user: this.parseUser(name, email, avatarUrl, isPro),
-      latitude: Number(latitude),
-      longitude: Number(longitude),
+      location: this.parseLocation(latitude, longitude)
     };
+  }
+
+  private parseLocation(latitude: string, longitude: string): Location {
+    return { latitude: Number(latitude), longitude: Number(longitude) };
   }
 
   private parseCity(city: CityNames): City {

@@ -32,7 +32,6 @@ export function getRandomCity(): string {
   return name;
 }
 
-
 export function getMongoURI(
   username: string,
   password: string,

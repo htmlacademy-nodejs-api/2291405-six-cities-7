@@ -1,8 +1,8 @@
+import { UserType } from '../../const';
 import { CommentDto } from '../../dto/comment/comment.dto';
 import { OfferDto } from '../../dto/offer/offer.dto';
 import { LoginUserDto } from '../../dto/user/login-user.dto';
-import { UserDto } from '../../dto/user/user.dto';
-import { Offer, User, UserAuth, Comment } from '../../types/types';
+import { Offer, UserAuth, Comment } from '../../types/types';
 
 
 export const adaptLoginToClient =
@@ -11,47 +11,22 @@ export const adaptLoginToClient =
     password: user.password
   });
 
-export const adaptUserToClient =
-  (user: UserDto): User => ({
-    name: user.name,
-    email: user.email,
-    avatarUrl: user.avatarUrl,
-    type: user.type
+export const adaptOfferToClient =
+  (offer: OfferDto): Offer => ({
+    ...offer,
+    host: offer.user
   });
 
 export const adaptOffersToClient =
-  (offers: OfferDto[]): Offer[] =>
-    offers
-      .filter((offer: OfferDto) =>
-        offer.user !== null,
-      )
-      .map((offer: OfferDto) => ({
-        id: offer.id,
-        price: offer.price,
-        rating: offer.rating,
-        title: offer.title,
-        isPremium: offer.isPremium,
-        isFavorite: offer.isFavorite,
-        city: {
-          name: 'Paris',
-          location: {
-            latitude: 48.85661,
-            longitude: 2.351499
-          }
-        },
-        location: {
-          latitude: offer.latitude,
-          longitude: offer.longitude,
-        },
-        previewImage: offer.previewImage,
-        type: offer.type,
-        bedrooms: offer.bedrooms,
-        description: offer.description,
-        goods: offer.goods,
-        host: adaptUserToClient(offer.user),
-        images: offer.images,
-        maxAdults: offer.maxAdults
-      }));
+  (offers: OfferDto[]): Offer[] => offers.map((offer: OfferDto) => ({
+    ...offer,
+    host: {
+      name: '',
+      avatarUrl: '',
+      type: UserType.Regular,
+      email: ''
+    }
+  }));
 
 export const adaptCommentsToClient =
   (comments: CommentDto[]): Comment[] =>
@@ -63,6 +38,6 @@ export const adaptCommentsToClient =
         id: comment.id,
         comment: comment.comment,
         date: comment.date,
-        user: adaptUserToClient(comment.user),
+        user: comment.user,
         rating: comment.rating
       }));

@@ -66,7 +66,6 @@ export class RestApplication {
 
     this.server.use('/users', this.userController.router);
     this.server.use('/offers', this.offerController.router);
-
     this.logger.info('Controller initialization completed');
   }
 

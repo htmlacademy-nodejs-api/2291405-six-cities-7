@@ -7,6 +7,10 @@ export {
 } from './dto/create-comment.dto.js';
 
 export {
+  CommentRdo
+} from './rdo/comment.rdo.js';
+
+export {
   DefaultCommentService
 } from './comment.service.js';
 

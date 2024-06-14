@@ -16,7 +16,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { GOODS } from '../../../helpers/index.js';
-import { City, CityNames, Location, OfferType } from '../../../types/index.js';
+import { City, Location, OfferType } from '../../../types/index.js';
 import { OfferValidationMessage } from './offer.messages.js';
 
 export class UpdateOfferDto {
@@ -33,7 +33,6 @@ export class UpdateOfferDto {
   public description?: string;
 
   @IsOptional()
-  @IsEnum(CityNames, { message: OfferValidationMessage.city.invalid })
   @ValidateNested({ message: OfferValidationMessage.city.invalid })
   public city?: City;
 
@@ -48,7 +47,6 @@ export class UpdateOfferDto {
   @ArrayMinSize(6, { message: OfferValidationMessage.images.arrayMinSize })
   @ArrayMaxSize(6, { message: OfferValidationMessage.images.arrayMaxSize })
   @Matches(/\.(gif|jpe?g|tiff?|png|webp|bmp)$/i, { each: true, message: OfferValidationMessage.images.invalidFormat })
-  @MaxLength(256, { message: OfferValidationMessage.previewImage.maxLength })
   public images?: string[];
 
   @IsOptional()
