@@ -1,12 +1,12 @@
 import { Command } from './command.interface.js';
 import { TSVFileReader } from '../../shared/libs/file-reader/index.js';
 import { getErrorMessage, getMongoURI } from '../../shared/helpers/index.js';
-import { Offer } from '../../shared/types/offer.type.js';
 import { DefaultUserService, UserModel, UserService } from '../../shared/modules/user/index.js';
 import { DefaultOfferService, OfferModel, OfferService } from '../../shared/modules/offer/index.js';
 import { DatabaseClient, MongoDatabaseClient } from '../../shared/libs/database-client/index.js';
 import { DEFAULT_DB_PORT, DEFAULT_USER_PASSWORD } from './command.constant.js';
 import { Logger, PinoLogger } from '../../shared/libs/logger/index.js';
+import { Offer } from '../types/offer.type.js';
 
 
 export class ImportCommand implements Command {
@@ -36,7 +36,7 @@ export class ImportCommand implements Command {
   }
 
   private async saveOffer(offer: Offer) {
-    const host = await this.userService.findOrCreate({...offer.user, password: DEFAULT_USER_PASSWORD}, this.salt);
+    const user = await this.userService.findOrCreate({...offer.user, password: DEFAULT_USER_PASSWORD}, this.salt);
 
     await this.offerService.create({
       title: offer.title,
@@ -46,13 +46,12 @@ export class ImportCommand implements Command {
       previewImage: offer.previewImage,
       images: offer.images,
       isPremium: offer.isPremium,
-      isFavorite: offer.isFavorite,
       type: offer.type,
       bedrooms: offer.bedrooms,
       maxAdults: offer.maxAdults,
       price: offer.price,
       goods: offer.goods,
-      hostId: host.id,
+      userId: user.id,
       location: offer.location
     });
   }

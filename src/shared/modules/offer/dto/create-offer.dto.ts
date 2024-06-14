@@ -1,7 +1,6 @@
 import {
   MinLength,
   MaxLength,
-  IsDateString,
   IsEnum,
   IsInt,
   Max,
@@ -17,7 +16,8 @@ import {
 } from 'class-validator';
 import { GOODS } from '../../../helpers/index.js';
 import { OfferValidationMessage } from './offer.messages.js';
-import { City, CityNames, Location, OfferType } from '../../../types/index.js';
+import { City, OfferType } from '../../../types/index.js';
+import { Location } from '../../../../cli/index.js';
 
 export class CreateOfferDto {
   @IsString({ message: OfferValidationMessage.title.invalidFormat })
@@ -30,10 +30,8 @@ export class CreateOfferDto {
   @MaxLength(1024, { message: OfferValidationMessage.description.maxLength })
   public description: string;
 
-  @IsDateString({}, { message: OfferValidationMessage.dateOfPublication.invalidFormat })
   public dateOfPublication: string;
 
-  @IsEnum(CityNames, { message: OfferValidationMessage.city.invalid })
   @ValidateNested({ message: OfferValidationMessage.city.invalid })
   public city: City;
 
@@ -50,9 +48,6 @@ export class CreateOfferDto {
 
   @IsBoolean({ message: OfferValidationMessage.isPremium.invalidFormat })
   public isPremium: boolean;
-
-  @IsBoolean({ message: OfferValidationMessage.isFavorite.invalidFormat })
-  public isFavorite: boolean;
 
   @IsEnum(OfferType, { message: OfferValidationMessage.type.invalid })
   public type: OfferType;
@@ -77,7 +72,7 @@ export class CreateOfferDto {
   @IsIn(GOODS, {each: true, message: OfferValidationMessage.goods.invalidValue })
   public goods: string[];
 
-  public hostId: string;
+  public userId: string;
 
   @ValidateNested({ message: OfferValidationMessage.location.invalid })
   public location: Location;

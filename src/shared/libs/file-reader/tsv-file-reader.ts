@@ -2,9 +2,11 @@ import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
 
 import { FileReader } from './file-reader.interface.js';
-import { Offer, User, Location, City, CityNames, OfferType} from '../../types/index.js';
+import { User, CityNames, OfferType, UserType} from '../../types/index.js';
 import { convertStringToBoolean} from '../../helpers/index.js';
 import { CITIES } from '../../helpers/const.js';
+import { Offer } from '../../../cli/types/offer.type.js';
+import { Location, City } from '../../../cli/index.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
   private CHUNK_SIZE = 16384;
@@ -24,7 +26,6 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       previewImage,
       images,
       isPremium,
-      isFavorite,
       type,
       bedrooms,
       maxAdults,
@@ -46,7 +47,6 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       previewImage,
       images: images.split(';'),
       isPremium: convertStringToBoolean(isPremium),
-      isFavorite: convertStringToBoolean(isFavorite),
       type: type as OfferType,
       bedrooms: Number(bedrooms),
       maxAdults: Number(maxAdults),
@@ -57,6 +57,10 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     };
   }
 
+  private parseLocation(latitude: string, longitude: string): Location {
+    return { latitude: Number(latitude), longitude: Number(longitude) };
+  }
+
   private parseCity(city: CityNames): City {
     return {
       name: city,
@@ -64,16 +68,12 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     };
   }
 
-  private parseLocation(latitude: string, longitude: string): Location {
-    return { latitude: Number(latitude), longitude: Number(longitude) };
-  }
-
-  private parseUser(name: string, email: string, avatarUrl:string, isPro: string): User {
+  private parseUser(name: string, email: string, avatarUrl:string, type: string): User {
     return {
       name,
       email,
       avatarUrl,
-      isPro: convertStringToBoolean(isPro)
+      type: type as UserType
     };
   }
 

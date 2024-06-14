@@ -7,6 +7,8 @@ import { OfferEntity } from './offer.entity.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Types } from 'mongoose';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
+import { HttpError } from '../../libs/rest/index.js';
+import { StatusCodes } from 'http-status-codes';
 
 const addFieldsToOffers = [
   {
@@ -20,8 +22,7 @@ const addFieldsToOffers = [
   {
     $addFields: {
       commentCount: { $size: '$comments' },
-      rating: { $avg: '$comments.rating' },
-      id: '$_id'
+      rating: { $avg: '$comments.rating' }
     }
   },
   {
@@ -34,6 +35,25 @@ const addFieldsToOffers = [
   }
 ];
 
+const addFieldUser = [
+  {
+    $lookup: {
+      from: 'users',
+      localField: 'userId',
+      foreignField: '_id',
+      as: 'users',
+    },
+  },
+  {
+    $addFields: {
+      user: { $arrayElemAt: ['$users', 0] },
+    },
+  },
+  {
+    $unset: ['users'],
+  },
+];
+
 @injectable()
 export class DefaultOfferService implements OfferService {
   private readonly DEFAULT_OFFER_LIMIT: number = 60;
@@ -41,7 +61,7 @@ export class DefaultOfferService implements OfferService {
 
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
-    @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>,
+    @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity> | null> {
@@ -50,27 +70,25 @@ export class DefaultOfferService implements OfferService {
     return this.findById(offer.id);
   }
 
-  public async updateById(id: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {
-    const offer = await this.offerModel.findByIdAndUpdate(id, dto, {new: true}).exec();
-    return this.findById(offer?.id);
+  public async updateById(offerId: string, dto: UpdateOfferDto, userId: string): Promise<DocumentType<OfferEntity> | null> {
+    await this.checkUser(offerId, userId);
+
+    const updatedOffer = await this.offerModel.findByIdAndUpdate(offerId, dto, {new: true}).exec();
+    return this.findById(updatedOffer?.id);
   }
 
-  public async findById(id: string): Promise<DocumentType<OfferEntity> | null> {
+  public async findById(id: string, userId?: string): Promise<DocumentType<OfferEntity> | null> {
     const offers = await this.offerModel.aggregate([
       {
         $match: { _id: new Types.ObjectId(id) }
       },
-      ...addFieldsToOffers,
       {
-        $lookup: {
-          from: 'hosts',
-          localField: 'hostId',
-          foreignField: '_id',
-          as: 'host'
-        }
+        $set: {isFavorite: { $in: [new Types.ObjectId(userId), '$favoritesForUsers'] }}
       },
+      ...addFieldsToOffers,
+      ...addFieldUser,
       {
-        $unwind: '$host'
+        $addFields: { id: { $toString: '$_id' } }
       },
       {
         $sort: { createAt: SortType.Desc }
@@ -80,24 +98,29 @@ export class DefaultOfferService implements OfferService {
     return offers[0];
   }
 
-  public async changeFavorites(id: string): Promise<void> {
-    const offer = await this.findById(id);
-    if (offer) {
-      this.offerModel.findByIdAndUpdate(id, {isFavorite: !(offer.isFavorite)}, {new: !(offer.isFavorite)}).exec();
-    }
+  public async deleteById(offerId: string, userId: string): Promise<void> {
+    await this.checkUser(offerId, userId);
+
+    this.offerModel.findByIdAndDelete(offerId).exec();
   }
 
-  public async deleteById(id: string): Promise<void> {
-    this.offerModel.findByIdAndDelete(id).exec();
-  }
-
-  public async findAll(count: number = this.DEFAULT_OFFER_LIMIT): Promise<DocumentType<OfferEntity>[]> {
-    return this.offerModel.aggregate([
+  public async findAll(userId?: string, count?: number): Promise<DocumentType<OfferEntity>[]> {
+    const limit = count || this.DEFAULT_OFFER_LIMIT;
+    const offers = await this.offerModel.aggregate([
+      {
+        $set: {isFavorite: { $in: [new Types.ObjectId(userId), '$favoritesForUsers'] }}
+      },
       ...addFieldsToOffers,
       {
-        $limit: count
-      }
+        $addFields: { id: { $toString: '$_id' } }
+      },
+      {
+        $limit: limit
+      },
+
     ]).exec();
+
+    return offers;
   }
 
   public async exists(documentId: string): Promise<boolean> {
@@ -105,12 +128,16 @@ export class DefaultOfferService implements OfferService {
     return document !== null;
   }
 
-  public async findFavorites(): Promise<DocumentType<OfferEntity>[]> {
+  public async findFavorites(userId?: string): Promise<DocumentType<OfferEntity>[]> {
     return this.offerModel.aggregate([
       {
-        $match: { isFavorite: true }
+        $match: { $expr: { $in: [new Types.ObjectId(userId), '$favoritesForUsers'] } }
       },
-      ...addFieldsToOffers
+      {
+        $set: { isFavorite: { $in: [new Types.ObjectId(userId), '$favoritesForUsers'] } }
+      },
+      ...addFieldsToOffers,
+      ...addFieldUser
     ]).exec();
   }
 
@@ -123,9 +150,38 @@ export class DefaultOfferService implements OfferService {
         }
       },
       ...addFieldsToOffers,
+      ...addFieldUser,
+      {
+        $addFields: { id: { $toString: '$_id' } }
+      },
       {
         $limit: this.DEFAULT_PREMIUM_OFFER_LIMIT
       }
     ]).exec();
+  }
+
+  public async toggleFavorite(offerId: string, isFavorite: boolean, userId: string): Promise<void> {
+    const offer = await this.offerModel.findById(offerId).exec();
+
+    if (!offer) {
+      throw new HttpError(StatusCodes.NOT_FOUND, `Offer with id ${offerId} not found.`, 'OfferService');
+    }
+
+    const userObjectId = new Types.ObjectId(userId);
+
+    if (isFavorite) {
+      offer.favoritesForUsers.push(userObjectId);
+    } else {
+      offer.favoritesForUsers.pull(userObjectId);
+    }
+
+    await offer.save();
+  }
+
+  private async checkUser(offerId: string, userId: string): Promise<void> {
+    const offer = await this.offerModel.findById(offerId);
+    if (userId !== offer?.userId.toString()) {
+      throw new HttpError(StatusCodes.NOT_ACCEPTABLE, 'No access for this user', 'OfferService');
+    }
   }
 }

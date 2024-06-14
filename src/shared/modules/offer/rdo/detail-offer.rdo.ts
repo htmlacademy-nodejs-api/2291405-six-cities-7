@@ -51,7 +51,7 @@ export class DetailOfferRdo {
 
   @Expose()
   @Type(() => UserRdo)
-  public host: UserRdo;
+  public user: UserRdo;
 
   @Expose()
   public location: Location;

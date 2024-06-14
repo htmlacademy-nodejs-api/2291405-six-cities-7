@@ -1,7 +1,6 @@
-import { User } from './user.type.js';
+import { OfferType, User } from '../../shared/types/index.js';
 import { City } from './city.type.js';
 import { Location } from './location.type.js';
-import { OfferType } from './offer-type.enum.js';
 
 export type Offer = {
   title: string;
@@ -11,7 +10,6 @@ export type Offer = {
   previewImage: string;
   images: string[];
   isPremium: boolean;
-  isFavorite: boolean;
   type: OfferType;
   bedrooms: number;
   maxAdults: number;

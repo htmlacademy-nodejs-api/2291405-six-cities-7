@@ -1,4 +1,4 @@
-import { City, Location, OfferType } from '../../../types/index.js';
+import { City, OfferType, Location } from '../../../types/index.js';
 
 export class RequestOfferDto {
   public title: string;
@@ -13,6 +13,6 @@ export class RequestOfferDto {
   public maxAdults: number;
   public price: number;
   public goods: string[];
-  public hostId: string;
+  public userId: string;
   public location: Location;
 }

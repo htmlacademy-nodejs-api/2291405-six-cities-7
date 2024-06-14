@@ -42,7 +42,7 @@ export class PathTransformer {
             continue;
           }
 
-          if (this.isStaticProperty(key) && typeof value === 'string') {
+          if (typeof value === 'string' && this.isStaticProperty(key)) {
             const staticPath = STATIC_FILES_ROUTE;
             const uploadPath = STATIC_UPLOAD_ROUTE;
             const serverHost = this.config.get('HOST');
