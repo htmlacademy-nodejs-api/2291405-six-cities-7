@@ -1,6 +1,6 @@
 import { CityNames, Location } from '../types/index.js';
 
-export const CITIES: Record<CityNames, Location> = {
+export const Cities: Record<CityNames, Location> = {
   'Paris': { latitude: 48.85661, longitude: 2.351499 },
   'Cologne': { latitude: 50.938361, longitude: 6.959974 },
   'Brussels': { latitude: 50.846557, longitude: 4.351697 },
@@ -9,7 +9,7 @@ export const CITIES: Record<CityNames, Location> = {
   'Dusseldorf': { latitude: 51.225402, longitude: 6.776314 }
 };
 
-export const GOODS = [
+export const Goods = [
   'Breakfast',
   'Air conditioning',
   'Laptop friendly workspace',
@@ -18,3 +18,5 @@ export const GOODS = [
   'Towels',
   'Fridge'
 ];
+
+export const IMAGES_COUNT = 6;

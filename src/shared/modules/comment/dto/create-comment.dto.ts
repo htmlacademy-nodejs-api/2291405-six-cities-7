@@ -1,15 +1,17 @@
 import { IsInt, IsMongoId, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { CommentValidationMessage } from './comment.messages.js';
+import { CommentLimit } from '../limits/comment-limit.enum.js';
+import { RatingLimit } from '../limits/rating-limit.enum.js';
 
 export class CreateCommentDto {
   @IsString({ message: CommentValidationMessage.comment.invalidFormat })
-  @MinLength(5, { message: CommentValidationMessage.comment.minLength })
-  @MaxLength(1024, { message: CommentValidationMessage.comment.maxLength })
+  @MinLength(CommentLimit.Min, { message: CommentValidationMessage.comment.minLength })
+  @MaxLength(CommentLimit.Max, { message: CommentValidationMessage.comment.maxLength })
   public comment: string;
 
   @IsInt({ message: CommentValidationMessage.rating.invalidFormat })
-  @Min(1, { message: CommentValidationMessage.rating.minValue })
-  @Max(5, { message: CommentValidationMessage.rating.maxValue })
+  @Min(RatingLimit.Min, { message: CommentValidationMessage.rating.minValue })
+  @Max(RatingLimit.Max, { message: CommentValidationMessage.rating.maxValue })
   public rating: string;
 
   @IsMongoId({ message: CommentValidationMessage.offerId.invalidId })

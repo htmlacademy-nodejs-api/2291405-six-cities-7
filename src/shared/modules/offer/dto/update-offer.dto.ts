@@ -15,21 +15,26 @@ import {
   MinLength,
   ValidateNested
 } from 'class-validator';
-import { GOODS } from '../../../helpers/index.js';
+import { Goods, IMAGES_COUNT } from '../../../helpers/index.js';
 import { City, Location, OfferType } from '../../../types/index.js';
 import { OfferValidationMessage } from './offer.messages.js';
+import { TitleLimit } from '../limits/title-limit.enum.js';
+import { DescriptionLimit } from '../limits/description-limit.enum.js';
+import { RoomLimit } from '../limits/room-limit.enum.js';
+import { GuestLimit } from '../limits/guest-limit.enum.js';
+import { PriceLimit } from '../limits/price-limit.enum.js';
 
 export class UpdateOfferDto {
   @IsOptional()
   @IsString({ message: OfferValidationMessage.title.invalidFormat })
-  @MinLength(10, { message: OfferValidationMessage.title.minLength })
-  @MaxLength(100, { message: OfferValidationMessage.title.maxLength })
+  @MinLength(TitleLimit.Min, { message: OfferValidationMessage.title.minLength })
+  @MaxLength(TitleLimit.Max, { message: OfferValidationMessage.title.maxLength })
   public title?: string;
 
   @IsOptional()
   @IsString({ message: OfferValidationMessage.description.invalidFormat })
-  @MinLength(20, { message: OfferValidationMessage.description.minLength })
-  @MaxLength(1024, { message: OfferValidationMessage.description.maxLength })
+  @MinLength(DescriptionLimit.Min, { message: OfferValidationMessage.description.minLength })
+  @MaxLength(DescriptionLimit.Max, { message: OfferValidationMessage.description.maxLength })
   public description?: string;
 
   @IsOptional()
@@ -44,8 +49,8 @@ export class UpdateOfferDto {
 
   @IsOptional()
   @IsArray({ message: OfferValidationMessage.images.invalidFormat })
-  @ArrayMinSize(6, { message: OfferValidationMessage.images.arrayMinSize })
-  @ArrayMaxSize(6, { message: OfferValidationMessage.images.arrayMaxSize })
+  @ArrayMinSize(IMAGES_COUNT, { message: OfferValidationMessage.images.arrayMinSize })
+  @ArrayMaxSize(IMAGES_COUNT, { message: OfferValidationMessage.images.arrayMaxSize })
   @Matches(/\.(gif|jpe?g|tiff?|png|webp|bmp)$/i, { each: true, message: OfferValidationMessage.images.invalidFormat })
   public images?: string[];
 
@@ -63,26 +68,26 @@ export class UpdateOfferDto {
 
   @IsOptional()
   @IsInt({ message: OfferValidationMessage.bedrooms.invalidFormat })
-  @Min(1, { message: OfferValidationMessage.bedrooms.minValue })
-  @Max(8, { message: OfferValidationMessage.bedrooms.maxValue })
+  @Min(RoomLimit.Min, { message: OfferValidationMessage.bedrooms.minValue })
+  @Max(RoomLimit.Max, { message: OfferValidationMessage.bedrooms.maxValue })
   public bedrooms?: number;
 
   @IsOptional()
   @IsInt({ message: OfferValidationMessage.maxAdults.invalidFormat })
-  @Min(1, { message: OfferValidationMessage.maxAdults.minValue })
-  @Max(10, { message: OfferValidationMessage.maxAdults.maxValue })
+  @Min(GuestLimit.Min, { message: OfferValidationMessage.maxAdults.minValue })
+  @Max(GuestLimit.Max, { message: OfferValidationMessage.maxAdults.maxValue })
   public maxAdults?: number;
 
   @IsOptional()
   @IsInt({ message: OfferValidationMessage.price.invalidFormat })
-  @Min(100, { message: OfferValidationMessage.price.minValue })
-  @Max(200000, { message: OfferValidationMessage.price.maxValue })
+  @Min(PriceLimit.Min, { message: OfferValidationMessage.price.minValue })
+  @Max(PriceLimit.Max, { message: OfferValidationMessage.price.maxValue })
   public price?: number;
 
   @IsOptional()
   @IsArray({message: OfferValidationMessage.goods.invalidFormat })
   @IsString({each: true, message: OfferValidationMessage.goods.invalidFormat })
-  @IsIn(GOODS, {each: true, message: OfferValidationMessage.goods.invalidValue })
+  @IsIn(Goods, {each: true, message: OfferValidationMessage.goods.invalidValue })
   public goods?: string[];
 
   @IsOptional()

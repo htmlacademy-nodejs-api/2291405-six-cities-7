@@ -22,7 +22,7 @@ const addFieldsToOffers = [
   {
     $addFields: {
       commentCount: { $size: '$comments' },
-      rating: { $avg: '$comments.rating' }
+      rating: { $trunc : [ {$avg: '$comments.rating'}, 1 ] },
     }
   },
   {

@@ -27,3 +27,5 @@ export {
 } from './user-service.interface.js';
 
 export { DEFAULT_AVATAR_FILE_NAME } from './user.constant.js';
+export { UserNameLimit } from './limits/user-name-limit.enum.js';
+export { UserPasswordLimit } from './limits/user-password-limit.enum.js';

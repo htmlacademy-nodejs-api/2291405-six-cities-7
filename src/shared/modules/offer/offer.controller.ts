@@ -5,7 +5,7 @@ import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { OfferService } from './offer-service.interface.js';
 import { fillDTO } from '../../helpers/index.js';
-import { CreateOfferRequest } from './create-offer-request.type.js';
+import { CreateOfferRequest } from './types/create-offer-request.type.js';
 import { OfferRdo } from './rdo/offer.rdo.js';
 import { DetailOfferRdo } from './rdo/detail-offer.rdo.js';
 import { CommentRdo, CommentService } from '../comment/index.js';
@@ -20,7 +20,7 @@ import {
   PrivateRouteMiddleware,
   RequestBody
 } from '../../libs/rest/index.js';
-import { ParamOfferId } from './type/param-offerid.type.js';
+import { ParamOfferId } from './types/param-offerid.type.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { CreateCommentRequest } from '../comment/types/create-comment-request.type.js';
 

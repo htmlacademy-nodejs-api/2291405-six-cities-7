@@ -10,7 +10,16 @@ import { UserRdo } from './rdo/user.rdo.js';
 import { LoginUserRequest } from './login-user-request.type.js';
 import { UserService } from './user-service.interface.js';
 import { CreateUserRequest } from './create-user-request.type.js';
-import { BaseController, HttpMethod, HttpError, ValidateDtoMiddleware, ValidateObjectIdMiddleware, UploadFileMiddleware, DocumentExistsMiddleware } from '../../libs/rest/index.js';
+import {
+  BaseController,
+  HttpMethod,
+  HttpError,
+  ValidateDtoMiddleware,
+  ValidateObjectIdMiddleware,
+  UploadFileMiddleware,
+  DocumentExistsMiddleware,
+  ValidateAuthorizedMiddleware
+} from '../../libs/rest/index.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { LoginUserDto } from './dto/login-user.dto.js';
 import { AuthService } from '../auth/index.js';
@@ -33,7 +42,10 @@ export class UserController extends BaseController {
       path: '/register',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateUserDto)]
+      middlewares: [
+        new ValidateAuthorizedMiddleware(),
+        new ValidateDtoMiddleware(CreateUserDto)
+      ]
     });
     this.addRoute({
       path: '/login',

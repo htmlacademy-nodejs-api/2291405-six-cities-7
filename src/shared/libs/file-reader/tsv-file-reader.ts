@@ -3,8 +3,7 @@ import { createReadStream } from 'node:fs';
 
 import { FileReader } from './file-reader.interface.js';
 import { User, CityNames, OfferType, UserType} from '../../types/index.js';
-import { convertStringToBoolean} from '../../helpers/index.js';
-import { CITIES } from '../../helpers/const.js';
+import { Cities, convertStringToBoolean} from '../../helpers/index.js';
 import { Offer } from '../../../cli/types/offer.type.js';
 import { Location, City } from '../../../cli/index.js';
 
@@ -64,7 +63,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   private parseCity(city: CityNames): City {
     return {
       name: city,
-      location: CITIES[city]
+      location: Cities[city]
     };
   }
 

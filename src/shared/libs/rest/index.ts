@@ -13,6 +13,7 @@ export { ValidateDtoMiddleware } from './middleware/validate-dto.middleware.js';
 export { DocumentExistsMiddleware } from './middleware/document-exists.middleware.js';
 export { UploadFileMiddleware } from './middleware/upload-file.middleware.js';
 export { PrivateRouteMiddleware } from './middleware/private-route.middleware.js';
+export { ValidateAuthorizedMiddleware } from './middleware/validate-authorized.middleware.js';
 export { ValidationErrorField } from './types/validation-error-field.type.js';
 export { ApplicationError } from './types/application-error.enum.js';
 export { ParseTokenMiddleware } from './middleware/parse-token.middleware.js';

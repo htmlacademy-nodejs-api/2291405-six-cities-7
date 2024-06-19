@@ -4,20 +4,14 @@ import { Location, User, OfferType } from '../../types/index.js';
 
 import { OfferGenerator } from './offer-generator.interface.js';
 import { MockServerData } from '../../types/index.js';
-import { generateRandomValue, getRandomItem, getRandomItems, GOODS, ParseObject } from '../../helpers/index.js';
+import { generateRandomValue, getRandomItem, getRandomItems, Goods, ParseObject } from '../../helpers/index.js';
 import { getRandomCity } from '../../helpers/common.js';
+import { GuestLimit, PriceLimit, RoomLimit } from '../../modules/offer/index.js';
 
-const MIN_ROOMS = 1;
-const MAX_ROOMS = 8;
-
-const MIN_GUESTS = 1;
-const MAX_GUESTS = 10;
-
-const MIN_PRICE = 100;
-const MAX_PRICE = 100000;
-
-const FIRST_WEEK_DAY = 1;
-const LAST_WEEK_DAY = 7;
+const enum WeekDays {
+  First = 1,
+  Last = 7
+}
 
 export class TSVOfferGenerator implements OfferGenerator {
   constructor(private readonly mockData: MockServerData) {}
@@ -27,7 +21,7 @@ export class TSVOfferGenerator implements OfferGenerator {
     const description = getRandomItem<string>(this.mockData.descriptions);
 
     const dateOfPublication = dayjs().
-      subtract(generateRandomValue(FIRST_WEEK_DAY, LAST_WEEK_DAY), 'day').
+      subtract(generateRandomValue(WeekDays.First, WeekDays.Last), 'day').
       toISOString();
 
     const city = getRandomCity();
@@ -37,11 +31,11 @@ export class TSVOfferGenerator implements OfferGenerator {
     const isPremium = getRandomItem([true, false]);
 
     const type = getRandomItem(Object.values(OfferType));
-    const bedrooms = generateRandomValue(MIN_ROOMS, MAX_ROOMS).toString();
-    const maxAdults = generateRandomValue(MIN_GUESTS, MAX_GUESTS).toString();
-    const price = generateRandomValue(MIN_PRICE, MAX_PRICE).toString();
+    const bedrooms = generateRandomValue(RoomLimit.Min, RoomLimit.Max).toString();
+    const maxAdults = generateRandomValue(GuestLimit.Min, GuestLimit.Max).toString();
+    const price = generateRandomValue(PriceLimit.Min, PriceLimit.Max).toString();
 
-    const goods = getRandomItems<string>(GOODS).join(';');
+    const goods = getRandomItems<string>(Goods).join(';');
     const user = ParseObject(getRandomItem<User>(this.mockData.users));
     const location = ParseObject(getRandomItem<Location>(this.mockData.locations));
 
