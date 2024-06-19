@@ -21,4 +21,11 @@ export {
 
 export {
   ParamOfferId
-} from './type/param-offerid.type.js';
+} from './types/param-offerid.type.js';
+
+
+export { RoomLimit } from './limits/room-limit.enum.js';
+export { GuestLimit } from './limits/guest-limit.enum.js';
+export { PriceLimit } from './limits/price-limit.enum.js';
+export { TitleLimit } from './limits/title-limit.enum.js';
+export { DescriptionLimit } from './limits/description-limit.enum.js';

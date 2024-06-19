@@ -18,6 +18,7 @@ export {
 } from './hash.js';
 
 export {
-  CITIES,
-  GOODS,
+  Cities,
+  Goods,
+  IMAGES_COUNT
 } from './const.js';

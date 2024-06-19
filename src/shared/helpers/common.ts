@@ -2,7 +2,7 @@ import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { ValidationError } from 'class-validator';
 
 import { ApplicationError, ValidationErrorField } from '../libs/rest/index.js';
-import { CITIES } from './const.js';
+import { Cities } from './index.js';
 
 export function convertStringToBoolean(value: string): boolean {
   return value.toLocaleLowerCase() === 'true';
@@ -28,7 +28,7 @@ export function ParseObject(obj: object): string {
 }
 
 export function getRandomCity(): string {
-  const name = getRandomItem(Object.keys(CITIES));
+  const name = getRandomItem(Object.keys(Cities));
   return name;
 }
 
